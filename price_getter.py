@@ -48,10 +48,19 @@ class PriceGetter:
 
     def get_soups(self):
         random.shuffle(user_agent_list)
+        headers = {"User-Agent": user_agent_list[0]}
         for url in self.url_list:
-            page = requests.get(url)
-            soup = BeautifulSoup(page.text, 'html.parser')
-            self.soup_list.append(soup)
+            try:
+                page = requests.get(url, headers=headers)
+                while page.status_code != 200:
+                    shuffle(user_agent_list)
+                    headers = {"User-Agent": user_agent_list[0]}
+                    page = requests.get(url, headers=headers)
+                soup = BeautifulSoup(page.text, 'html.parser')
+                self.soup_list.append(soup)
+            except:
+                print(page)
+                print("Exception occured")
 
     def read_urls(self, filename):
         with open(filename, "r") as url_file:
