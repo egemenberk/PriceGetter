@@ -1,9 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from lxml.html import fromstring
-from itertools import cycle
 import random
-import json
 import sys
 from datetime import datetime
 
@@ -54,7 +51,6 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "trendyol": ["span", "class", "prc-slg"],
              "itopya": ["div", "class", "new text-right"]
              }
-
 
 class PriceGetter:
     def __init__(self, url_list=[]):
