@@ -41,6 +41,7 @@ NAME_TAGS = {"vatanbilgisayar":  ["div", "id", "plhUrunAdi"],
              "incehesap": ["h1", "itemprop", "name"],
              "trendyol": ["div", "class", "pr-in-nm"],
              "itopya": ["h1", "class", "name"],
+             "sinerji": ["h1", "itemprop", "name"]
              }
 
 PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
@@ -50,8 +51,11 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "ebrarbilgisayar": ["div", "class", "urun_fiyati"],
              "incehesap": ["span", "class", "cur"],
              "trendyol": ["span", "class", "prc-slg"],
-             "itopya": ["div", "class", "new text-right"]
+             "itopya": ["div", "class", "new text-right"],
+             "sinerji": ["div", "class", "urun_fiyati"]
              }
+
+thread_no = 1
 
 def split(a, n):
     k, m = divmod(len(a), n)
@@ -82,31 +86,25 @@ class PriceGetter:
         elif "hepsiburada" in site_name:
             return price_holder.text.strip() + " TL"
 
-        elif "qp" in site_name:
-            return price_holder.text.strip()
-
         elif "trendyol" in site_name:
             return price_holder.text.strip() + " TL"
 
         elif "incehesap" in site_name:
             return price_holder.text.strip('\r').replace(" ", "")
 
-        elif "ebrar" in site_name:
-            return price_holder.text.strip()
-
         elif "amazon" in site_name:
             return price_holder.text.strip() + " TL"
 
-        else:
-            print("You should not see this")
+        else: # ebrar qp sinerji
+            return price_holder.text.strip()
 
     def fetch_site_name(self, url):
         #url = json.loads(soup.find('script', type='application/ld+json').text)["url"]
-        site_name = url.split(".com")[0].split("//www.")[1]
+        site_name = url.split("www.")[1].split(".")[0]
         return site_name
 
     def get_soups(self):
-        list_of_url_lists = split(self.url_list, 8)
+        list_of_url_lists = split(self.url_list, thread_no)
         threads = []
         for url_list in list_of_url_lists:
             t = threading.Thread(target=self.get_soups_helper, args=(url_list, ))
