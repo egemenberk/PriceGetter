@@ -83,7 +83,7 @@ class PriceGetter:
             return price_holder.text.strip() + " TL"
 
         elif "incehesap" in site_name:
-            return price_holder.text.strip()
+            return price_holder.text.strip('\r').replace(" ", "")
 
         elif "ebrar" in site_name:
             return price_holder.text.strip()
