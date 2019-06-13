@@ -47,7 +47,7 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "qp" : ["span", "class", "price"],
              "amazon": ["span", "id", "priceblock_ourprice"],
              "ebrarbilgisayar": ["div", "class", "urun_fiyati"],
-             "incehesap": ["div", "class", "arti-indirimli-fiyat cur"],
+             "incehesap": ["span", "class", "cur"],
              "trendyol": ["span", "class", "prc-slg"],
              "itopya": ["div", "class", "new text-right"]
              }
