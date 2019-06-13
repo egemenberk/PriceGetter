@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import random
 import sys
 from datetime import datetime
+import threading
 
 user_agent_list = [
    #Chrome
@@ -52,9 +53,14 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "itopya": ["div", "class", "new text-right"]
              }
 
+def split(a, n):
+    k, m = divmod(len(a), n)
+    return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+
 class PriceGetter:
     def __init__(self, url_list=[]):
         self.url_list = url_list
+        self.price_list_lock = threading.Lock()
         self.price_list = {}
         self.soup_list = []
 
@@ -100,16 +106,29 @@ class PriceGetter:
         return site_name
 
     def get_soups(self):
+        list_of_url_lists = split(self.url_list, 8)
+        threads = []
+        for url_list in list_of_url_lists:
+            t = threading.Thread(target=self.get_soups_helper, args=(url_list, ))
+            threads.append(t)
+
+        for t in threads:
+            t.start()
+
+        for t in threads:
+            t.join()
+
+    def get_soups_helper(self, url_list):
         random.shuffle(user_agent_list)
         headers = {"User-Agent": user_agent_list[0]}
-        for url in self.url_list:
+        for url in url_list:
             page = requests.get(url, headers=headers)
             while page.status_code != 200:
                 shuffle(user_agent_list)
                 headers = {"User-Agent": user_agent_list[0]}
                 page = requests.get(url, headers=headers)
             soup = BeautifulSoup(page.text, 'html.parser')
-            self.get_results(soup, url)
+            self.extract_items(soup, url)
 
     def read_urls(self, filename):
         with open(filename, "r") as url_file:
@@ -122,13 +141,14 @@ class PriceGetter:
             prices += key + ": " + value + "\n"
         return prices
 
-    def get_results(self, soup, url):
+    def extract_items(self, soup, url):
         site_name = self.fetch_site_name(url)
         tag_list = NAME_TAGS[site_name]
         name = self.get_name(soup, NAME_TAGS[site_name]) + "(" + site_name + ")"
         price = self.get_price(soup, PRICE_TAGS[site_name], site_name)
         print(name, price)
-        self.price_list[name] = price
+        with self.price_list_lock:
+            self.price_list[name] = price
 
     def save_results(self, filename):
         day = datetime.now().strftime("%d-%m-%Y")
