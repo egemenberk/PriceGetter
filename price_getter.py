@@ -41,7 +41,8 @@ NAME_TAGS = {"vatanbilgisayar":  ["div", "id", "plhUrunAdi"],
              "incehesap": ["h1", "itemprop", "name"],
              "trendyol": ["div", "class", "pr-in-nm"],
              "itopya": ["h1", "class", "name"],
-             "sinerji": ["h1", "itemprop", "name"]
+             "sinerji": ["h1", "itemprop", "name"],
+             "gameekstra": ["div", "id", "urun_adi"]
              }
 
 PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
@@ -52,10 +53,11 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "incehesap": ["span", "class", "cur"],
              "trendyol": ["span", "class", "prc-slg"],
              "itopya": ["div", "class", "new text-right"],
-             "sinerji": ["div", "class", "urun_fiyati"]
+             "sinerji": ["div", "class", "urun_fiyati"],
+             "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"]
              }
 
-thread_no = 1
+thread_no = 8
 
 def split(a, n):
     k, m = divmod(len(a), n)
@@ -67,36 +69,48 @@ class PriceGetter:
         self.price_list_lock = threading.Lock()
         self.price_list = {}
         self.soup_list = []
+        self.user_agent_list = user_agent_list
 
     # override for each website
     def get_name(self, soup, tag_list):
         name_holder = soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
+        if name_holder == None:
+            return "-"
         return name_holder.text.strip()
 
     # override for each website
     def get_price(self, soup, tag_list, site_name):
         price_holder = soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
+        price = ""
+
+        if price_holder == None:
+            return "-"
 
         if "vatanbilgisayar" in site_name:
-            return price_holder.text.split("TL")[0] + "TL"
+            price = price_holder.text.split("TL")[0] + "TL"
 
         elif "itopya" in site_name:
-            return price_holder.contents[0] + " TL"
+            price = price_holder.contents[0] + " TL"
 
         elif "hepsiburada" in site_name:
-            return price_holder.text.strip() + " TL"
+            price = price_holder.text.strip() + " TL"
 
         elif "trendyol" in site_name:
-            return price_holder.text.strip() + " TL"
+            price = price_holder.text.strip() + " TL"
 
         elif "incehesap" in site_name:
-            return price_holder.text.strip('\r').replace(" ", "")
+            price = price_holder.text.strip('\r').replace(" ", "")
 
         elif "amazon" in site_name:
-            return price_holder.text.strip() + " TL"
+            price = price_holder.text.strip() + " TL"
+
+        elif "gameekstra" in site_name:
+            price = price_holder.text.strip().replace(" ", "")
 
         else: # ebrar qp sinerji
-            return price_holder.text.strip()
+            price = price_holder.text.strip()
+
+        return price.upper().replace("KDV", "").replace("DAHIL", "")
 
     def fetch_site_name(self, url):
         #url = json.loads(soup.find('script', type='application/ld+json').text)["url"]
@@ -116,15 +130,22 @@ class PriceGetter:
         for t in threads:
             t.join()
 
-    def get_soups_helper(self, url_list):
-        random.shuffle(user_agent_list)
+    def new_header(self):
+        random.shuffle(self.user_agent_list)
         headers = {"User-Agent": user_agent_list[0]}
+        return headers
+
+    def get_soups_helper(self, url_list):
+        headers = self.new_header()
         for url in url_list:
             page = requests.get(url, headers=headers)
             while page.status_code != 200:
-                shuffle(user_agent_list)
-                headers = {"User-Agent": user_agent_list[0]}
-                page = requests.get(url, headers=headers)
+                headers = self.new_header()
+                try:
+                    page = requests.get(url, headers=headers)
+                except Exception as e:
+                    print(e)
+                    headers = self.new_header()
             soup = BeautifulSoup(page.text, 'html.parser')
             self.extract_items(soup, url)
 
