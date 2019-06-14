@@ -35,6 +35,8 @@ https://www.hepsiburada.com/cooler-master-masterwatt-mwe-750w-80-gold-120mm-fanl
 https://www.hepsiburada.com/fsp-hyper-k-hp700s-700w-12-cm-fan-80-guc-kaynagi-p-HBV00000JORV4
 https://www.hepsiburada.com/fsp-hydro-700-serisi-80plus-bronze-700w-psu-p-HBV0000065UMI
 https://www.hepsiburada.com/zalman-z9neo-plus-black-atx-mid-tower-siyah-kasa-2xusb-2-0-2xusb-3-0-1xmikrofon-1xkulaklik-pci-agp-420mm-p-HBV000007GINM
+https://www.hepsiburada.com/samsung-860-evo-250gb-560mb-520mb-s-sata3-2-5-ssd-mz-76e250bw-p-HBV00000A5BL9
+https://www.hepsiburada.com/samsung-860-evo-500gb-560mb-520mb-s-sata3-2-5-ssd-mz-76e500bw-p-HBV00000A5BLB
 https://www.incehesap.com/inno3d-geforce-rtx-2060-twin-x2-gaming-ekran-karti-fiyati-41919/?gclid=CK3DsY-X3eICFdFD0wodXHgHuw
 https://www.incehesap.com/msi-geforce-rtx-2060-gaming-z-6g-gaming-ekran-karti-fiyati-41402/
 https://www.incehesap.com/msi-geforce-rtx-2070-ventus-8g-gaming-ekran-karti-fiyati-42032/
@@ -87,3 +89,16 @@ https://www.vatanbilgisayar.com/amd-ryzen-5-2600x-socket-am4-4-2ghz-19mb-onbelle
 https://www.vatanbilgisayar.com/corsair-cx-serisi-80plus-bronze-750w-guc-kaynagi.html
 https://www.vatanbilgisayar.com/corsair-builder-vs-serisi-80plus-650w-guc-kaynagi.html
 https://www.vatanbilgisayar.com/cooler-master-masterwatt-mwe-750w-80-plus-gold-120mm-fanli-guc-kaynagi.html
+https://www.gameekstra.com/urun/msi-geforce-rtx-2060-ventus-6g-oc-6gb-192bit-gddr6-dx12-ekran-karti
+https://www.gameekstra.com/urun/amd-ryzen-5-2600-soket-am4-3-4ghz-19mb-onbellek-6-cekirdek-islemci
+https://www.gameekstra.com/urun/amd-ryzen-5-2600x-soket-am4-3-6ghz-19mb-onbellek-6-cekirdek-islemci
+https://www.sinerji.gen.tr/msi-geforce-rtx2060-ventus-6g-oc-6gb-gddr6-192-bit-ekran-karti-pmu417110
+https://www.sinerji.gen.tr/msi-geforce-rtx2060-gaming-z-6gb-gddr6-192-ekran-karti-pmu417109
+https://www.sinerji.gen.tr/asus-geforce-rtx2060-rog-strix-advanced-edition-6gb-gddr6-192-bit-ekran-karti-pmu417160
+https://www.sinerji.gen.tr/msi-geforce-rtx2070-ventus-8g-8gb-gddr6-256-bit-ekran-karti-pmu417222
+https://www.sinerji.gen.tr/msi-geforce-rtx2080-aero-8g-8gb-gddr6-256-bit-ekran-karti-pmu416707
+https://www.sinerji.gen.tr/amd-ryzen-5-2600-340-ghz-19mb-am4-12nm-islemci-pmu411504
+https://www.sinerji.gen.tr/amd-ryzen-5-2600x-360-ghz-19mb-am4-12nm-islemci-pmu411503
+https://www.sinerji.gen.tr/corsair-16gb2x8-vengeance-lpx-siyah-3000mhz-cl16-ddr4-ram-cmk16gx4m2d3000c16-pmu416927
+https://www.sinerji.gen.tr/corsair-750w-cx-serisi-80-bronze-yari-moduler-guc-kaynagi-pmu3495
+https://www.sinerji.gen.tr/fsp-750w-raider-ii-ra2-750-80-silver-guc-kaynagi-pmu416977

@@ -46,7 +46,7 @@ NAME_TAGS = {"vatanbilgisayar":  ["div", "id", "plhUrunAdi"],
              }
 
 PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
-             "hepsiburada": ["span", "data-bind", "markupText:'currentPriceBeforePoint'"],
+             "hepsiburada": ["span", "id", "offering-price"],
              "qp" : ["span", "class", "price"],
              "amazon": ["span", "id", "priceblock_ourprice"],
              "ebrarbilgisayar": ["div", "class", "urun_fiyati"],
@@ -57,7 +57,7 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"]
              }
 
-thread_no = 8
+thread_no = 16
 
 def split(a, n):
     k, m = divmod(len(a), n)
@@ -78,6 +78,11 @@ class PriceGetter:
             return "-"
         return name_holder.text.strip()
 
+    def clean_price(self, price):
+        price = price.replace(" ", "").upper().replace("TL", "").replace("₺", "")
+        price = price.replace("KDV", "").replace("DAHIL", "")
+        return price
+
     # override for each website
     def get_price(self, soup, tag_list, site_name):
         price_holder = soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
@@ -87,30 +92,21 @@ class PriceGetter:
             return "-"
 
         if "vatanbilgisayar" in site_name:
-            price = price_holder.text.split("TL")[0] + "TL"
+            price = price_holder.text.split("TL")[0]
 
         elif "itopya" in site_name:
-            price = price_holder.contents[0] + " TL"
-
-        elif "hepsiburada" in site_name:
-            price = price_holder.text.strip() + " TL"
-
-        elif "trendyol" in site_name:
-            price = price_holder.text.strip() + " TL"
+            price = price_holder.contents[0]
 
         elif "incehesap" in site_name:
-            price = price_holder.text.strip('\r').replace(" ", "")
+            price = price_holder.text.strip('\r')
 
-        elif "amazon" in site_name:
-            price = price_holder.text.strip() + " TL"
+        elif "hepsiburada" in site_name:
+            price = price_holder["content"]
 
-        elif "gameekstra" in site_name:
-            price = price_holder.text.strip().replace(" ", "")
-
-        else: # ebrar qp sinerji
+        else:
             price = price_holder.text.strip()
 
-        return price.upper().replace("KDV", "").replace("DAHIL", "")
+        return self.clean_price(price)
 
     def fetch_site_name(self, url):
         #url = json.loads(soup.find('script', type='application/ld+json').text)["url"]
@@ -176,12 +172,52 @@ class PriceGetter:
             out.write(key + ":" + value + "\n")
         out.close()
 
-if __name__ == '__main__':
-    if(len(sys.argv) != 2):
-        print("Usage is python3 price_getter.py <url_file>")
+def help():
+    print("\nusage: python3 price_getter.py [-h] [--url] [files] [url] \n")
+    print("Arguments")
+    print("\t -u or --url <url>:\t Fetch the price from given url")
+    print("\t -f or --file <price file>:\t Fetch prices from given file")
+    print("\t -h or --help:\t Show this help info")
+
+    if(len(sys.argv) < 2):
+        print("python3 price_getter.py --help or -h for more info")
         exit(0)
-    item = PriceGetter()
-    item.read_urls(sys.argv[1])
-    item.get_soups()
-    item.save_results(sys.argv[1])
-    #print(item)
+
+if __name__ == '__main__':
+
+    if len(sys.argv) > 3:
+        help()
+        exit()
+
+    arg = sys.argv[1]
+
+    if arg == "-u" or arg == "--url":
+        index_url = sys.argv.index(arg) + 1
+        url_list = []
+        try:
+            url_list.append(sys.argv[index_url])
+        except IndexError:
+            help()
+            exit(0)
+
+        item = PriceGetter(url_list)
+        item.get_soups()
+        exit(0)
+
+    if arg == "-f" or arg == "--file":
+        file_loc = sys.argv.index(arg) + 1
+        filename = ""
+        try:
+            filename = sys.argv[file_loc]
+        except:
+            help()
+            exit(0)
+
+        item = PriceGetter()
+        item.read_urls(filename)
+        item.get_soups()
+        item.save_results(sys.argv[1])
+
+    else:
+        help()
+        exit(0)
