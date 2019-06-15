@@ -1,7 +1,6 @@
 import sys
 
 list_of_price_files = sys.argv[1:]
-print(list_of_price_files)
 prices = {}
 
 def read_prices(filename):
@@ -13,13 +12,32 @@ def read_prices(filename):
 
     return prices
 
-for price_file in list_of_price_files:
-    prices[price_file] = read_prices(price_file)
+def get_prices(prices):
+    for price_file in list_of_price_files:
+        prices[price_file] = read_prices(price_file)
 
-price_dict = prices[list_of_price_files[0]]
+def find_bigger_price_list(prices):
+    bigger_file = ""
+    maxim = 0
+    for key, val in prices.items():
+        if len(val) > maxim:
+            maxim = len(val)
+            bigger_file = key
+    return bigger_file
+
+get_prices(prices)
+bigger_file = find_bigger_price_list(prices)
+price_dict = prices[bigger_file]
+print("\t" + bigger_file, end="")
+for price_file_name in list_of_price_files:
+    if price_file_name != bigger_file:
+        print("\t" + price_file_name, end="")
+print()
 for name, price in price_dict.items():
     other_prices = []
-    for price_file_name in list_of_price_files[1:]:
+    for price_file_name in list_of_price_files:
+        if price_file_name == bigger_file:
+            continue
         price_dict_other = prices[price_file_name]
         other_price = "0"
         try:
@@ -27,7 +45,7 @@ for name, price in price_dict.items():
         except KeyError:
             pass
         other_prices.append(other_price)
-    print(name[:30] + ": " + price.replace("\n","").replace("\xa0", "") + "\t", end='', flush=True)
+    print(name[:20] + ": " + price.replace("\n","").replace("\xa0", "") + "\t", end='', flush=True)
     for other_price in other_prices:
         print(other_price.replace("\n", "").replace("\xa0", "") + "\t", end='', flush=True)
     print()
