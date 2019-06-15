@@ -81,6 +81,7 @@ class PriceGetter:
     def clean_price(self, price):
         price = price.replace(" ", "").upper().replace("TL", "").replace("₺", "")
         price = price.replace("KDV", "").replace("DAHIL", "")
+        price = price.replace("\xa0", "").replace("\n", "")
         return price
 
     # override for each website
@@ -216,7 +217,7 @@ if __name__ == '__main__':
         item = PriceGetter()
         item.read_urls(filename)
         item.get_soups()
-        item.save_results(sys.argv[1])
+        item.save_results(filename)
 
     else:
         help()
