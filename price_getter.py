@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
 import requests
 from bs4 import BeautifulSoup
 import random
 import sys
 from datetime import datetime
 import threading
+import argparse
 
 user_agent_list = [
    #Chrome
@@ -62,6 +64,14 @@ thread_no = 16
 def split(a, n):
     k, m = divmod(len(a), n)
     return (a[i * k + min(i, m):(i + 1) * k + min(i + 1, m)] for i in range(n))
+
+def handle_args():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-u", "--url", help="Fetch the price from given url")
+    parser.add_argument("-f", "--file", help="Fetch prices from given file")
+    args = parser.parse_args()
+    return args
+
 
 class PriceGetter:
     def __init__(self, url_list=[]):
@@ -173,52 +183,21 @@ class PriceGetter:
             out.write(key + ":" + value + "\n")
         out.close()
 
-def help():
-    print("\nusage: python3 price_getter.py [-h] [--url] [files] [url] \n")
-    print("Arguments")
-    print("\t -u or --url <url>:\t Fetch the price from given url")
-    print("\t -f or --file <price file>:\t Fetch prices from given file")
-    print("\t -h or --help:\t Show this help info")
-
-    if(len(sys.argv) < 2):
-        print("python3 price_getter.py --help or -h for more info")
-        exit(0)
-
 if __name__ == '__main__':
 
-    if len(sys.argv) > 3:
-        help()
-        exit()
+    args = handle_args()
 
-    arg = sys.argv[1]
-
-    if arg == "-u" or arg == "--url":
-        index_url = sys.argv.index(arg) + 1
+    if args.url != None:
         url_list = []
-        try:
-            url_list.append(sys.argv[index_url])
-        except IndexError:
-            help()
-            exit(0)
-
+        url_list.append(args.url)
         item = PriceGetter(url_list)
         item.get_soups()
-        exit(0)
 
-    if arg == "-f" or arg == "--file":
-        file_loc = sys.argv.index(arg) + 1
-        filename = ""
-        try:
-            filename = sys.argv[file_loc]
-        except:
-            help()
-            exit(0)
-
+    if args.file != None:
+        filename = args.file
         item = PriceGetter()
         item.read_urls(filename)
         item.get_soups()
         item.save_results(filename)
 
-    else:
-        help()
-        exit(0)
+
