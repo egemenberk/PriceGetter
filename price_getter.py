@@ -6,6 +6,7 @@ import sys
 from datetime import datetime
 import threading
 import argparse
+from item import Item
 
 user_agent_list = [
    #Chrome
@@ -35,31 +36,7 @@ user_agent_list = [
     'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
 ]
 
-NAME_TAGS = {"vatanbilgisayar":  ["div", "id", "plhUrunAdi"],
-             "hepsiburada": ["span", "itemprop","name"],
-             "qp" : ["span", "class", "base"],
-             "amazon": ["span", "id", "productTitle"],
-             "ebrarbilgisayar": ["h1", "itemprop", "name"],
-             "incehesap": ["h1", "itemprop", "name"],
-             "trendyol": ["div", "class", "pr-in-nm"],
-             "itopya": ["h1", "class", "name"],
-             "sinerji": ["h1", "itemprop", "name"],
-             "gameekstra": ["div", "id", "urun_adi"]
-             }
-
-PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
-             "hepsiburada": ["span", "id", "offering-price"],
-             "qp" : ["span", "class", "price"],
-             "amazon": ["span", "id", "priceblock_ourprice"],
-             "ebrarbilgisayar": ["div", "class", "urun_fiyati"],
-             "incehesap": ["span", "class", "cur"],
-             "trendyol": ["span", "class", "prc-slg"],
-             "itopya": ["div", "class", "new text-right"],
-             "sinerji": ["div", "class", "urun_fiyati"],
-             "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"]
-             }
-
-thread_no = 16
+thread_number = 16
 
 def split(a, n):
     k, m = divmod(len(a), n)
@@ -72,63 +49,19 @@ def handle_args():
     args = parser.parse_args()
     return args
 
-
 class PriceGetter:
-    def __init__(self, url_list=[]):
-        self.url_list = url_list
+    def __init__(self, item_list=[]):
+        self.item_list = item_list
         self.price_list_lock = threading.Lock()
         self.price_list = {}
-        self.soup_list = []
         self.user_agent_list = user_agent_list
+        self.headers = {"User-Agent": user_agent_list[0]}
 
-    # override for each website
-    def get_name(self, soup, tag_list):
-        name_holder = soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
-        if name_holder == None:
-            return "-"
-        return name_holder.text.strip()
-
-    def clean_price(self, price):
-        price = price.replace(" ", "").upper().replace("TL", "").replace("₺", "")
-        price = price.replace("KDV", "").replace("DAHIL", "")
-        price = price.replace("\xa0", "").replace("\n", "")
-        return price
-
-    # override for each website
-    def get_price(self, soup, tag_list, site_name):
-        price_holder = soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
-        price = ""
-
-        if price_holder == None:
-            return "-"
-
-        if "vatanbilgisayar" in site_name:
-            price = price_holder.text.split("TL")[0]
-
-        elif "itopya" in site_name:
-            price = price_holder.contents[0]
-
-        elif "incehesap" in site_name:
-            price = price_holder.text.strip('\r')
-
-        elif "hepsiburada" in site_name:
-            price = price_holder["content"]
-
-        else:
-            price = price_holder.text.strip()
-
-        return self.clean_price(price)
-
-    def fetch_site_name(self, url):
-        #url = json.loads(soup.find('script', type='application/ld+json').text)["url"]
-        site_name = url.split("www.")[1].split(".")[0]
-        return site_name
-
-    def get_soups(self):
-        list_of_url_lists = split(self.url_list, thread_no)
+    def get_soups(self, thread_number):
+        list_of_item_lists = split(self.item_list, thread_number)
         threads = []
-        for url_list in list_of_url_lists:
-            t = threading.Thread(target=self.get_soups_helper, args=(url_list, ))
+        for item_list in list_of_item_lists:
+            t = threading.Thread(target=self.get_soups_helper, args=(item_list, ))
             threads.append(t)
 
         for t in threads:
@@ -137,29 +70,23 @@ class PriceGetter:
         for t in threads:
             t.join()
 
-    def new_header(self):
+    def generate_new_header(self):
         random.shuffle(self.user_agent_list)
-        headers = {"User-Agent": user_agent_list[0]}
-        return headers
+        self.headers = {"User-Agent": user_agent_list[0]}
 
-    def get_soups_helper(self, url_list):
-        headers = self.new_header()
-        for url in url_list:
-            page = requests.get(url, headers=headers)
-            while page.status_code != 200:
-                headers = self.new_header()
-                try:
-                    page = requests.get(url, headers=headers)
-                except Exception as e:
-                    print(e)
-                    headers = self.new_header()
-            soup = BeautifulSoup(page.text, 'html.parser')
-            self.extract_items(soup, url)
+    def get_soups_helper(self, item_list):
+        for item in item_list:
+            while item.fetch_soup(self.headers) == None:
+                self.generate_new_header()
+            item.extract_info()
+            with self.price_list_lock:
+                self.price_list[item.name] = item.price
 
     def read_urls(self, filename):
         with open(filename, "r") as url_file:
             for line in url_file:
-                self.url_list.append(line.rstrip())
+                item = Item(line.rstrip())
+                self.item_list.append(item)
 
     def __str__(self):
         prices = ""
@@ -167,18 +94,9 @@ class PriceGetter:
             prices += key + ": " + value + "\n"
         return prices
 
-    def extract_items(self, soup, url):
-        site_name = self.fetch_site_name(url)
-        tag_list = NAME_TAGS[site_name]
-        name = self.get_name(soup, NAME_TAGS[site_name]) + "(" + site_name + ")"
-        price = self.get_price(soup, PRICE_TAGS[site_name], site_name)
-        print(name, price)
-        with self.price_list_lock:
-            self.price_list[name] = price
-
     def save_results(self, filename):
         day = datetime.now().strftime("%d-%m-%Y")
-        out = open(filename.strip(".txt") + "-" + day + ".txt", "w+")
+        out = open(day + ".txt", "w+")
         for key, value in self.price_list.items():
             out.write(key + ":" + value + "\n")
         out.close()
@@ -188,16 +106,16 @@ if __name__ == '__main__':
     args = handle_args()
 
     if args.url != None:
-        url_list = []
-        url_list.append(args.url)
-        item = PriceGetter(url_list)
-        item.get_soups()
+        item_list = []
+        item_list.append(Item(args.url))
+        items = PriceGetter(item_list)
+        items.get_soups(thread_number=1)
 
     if args.file != None:
         filename = args.file
         item = PriceGetter()
         item.read_urls(filename)
-        item.get_soups()
+        item.get_soups(thread_number=thread_number)
         item.save_results(filename)
 
 
