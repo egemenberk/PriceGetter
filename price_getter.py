@@ -49,6 +49,15 @@ def handle_args():
     args = parser.parse_args()
     return args
 
+def singleton(cls):
+    instances = {}
+    def getinstance(*args, **kwargs):
+        if cls not in instances:
+            instances[cls] = cls(*args, **kwargs)
+        return instances[cls]
+    return getinstance
+
+@singleton
 class PriceGetter:
     def __init__(self, item_list=[]):
         self.item_list = item_list

@@ -25,6 +25,15 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"]
              }
 
+def handle_exception(func):
+    def wrapper(*args, **kwargs):
+        try:
+            func(*args, **kwargs)
+        except Exception as e:
+            print("EXCEPTION occured in function" + str(func))
+            print(e)
+    return wrapper
+
 class Item:
     def __init__(self, url=None):
         self.url = url
@@ -41,7 +50,7 @@ class Item:
         try:
             page = requests.get(self.url, headers=headers)
         except Exception as e:
-            print("Exception occured while fetching soup")
+            print("EXCEPTION occured while fetching soup")
             print(e)
             return None
         self.soup = BeautifulSoup(page.text, 'html.parser')
@@ -67,13 +76,15 @@ class Item:
         price = price.replace("\xa0", "").replace("\n", "")
         return price
 
+    @handle_exception
     def get_price(self):
         tag_list = self.price_tag_list
         price_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
         price = ""
 
         if price_holder == None:
-            price = "0"
+            self.price = "0"
+            return
 
         if "vatanbilgisayar" in self.site_name:
             price = price_holder.text.split("TL")[0]
