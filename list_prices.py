@@ -2,6 +2,10 @@
 import sys
 import re
 
+HEADER_SPACE = 23
+NAME_LEN = 20
+PRICE_SPACE = 7
+
 def clean_price(price):
     """ Gets String Returns Float
     """
@@ -37,18 +41,29 @@ def find_bigger_price_list(prices):
             bigger_file = key
     return bigger_file
 
+def print_file_names(list_of_price_files, bigger_file):
+    print(" " * HEADER_SPACE + bigger_file.replace(".txt", ""), end="")
+    for price_file_name in list_of_price_files:
+        if price_file_name != bigger_file:
+            print(" | " + price_file_name.replace(".txt", ""), end="")
+    print()
+
+def print_prices(other_prices):
+    print(name[:NAME_LEN] + ": ", end='', flush=True)
+    for other_price in other_prices:
+        print("{1:5.0f} {0:>6s} ".format("",clean_price(other_price)), end="")
+    print()
+
 if __name__ == '__main__':
+    i=0
     list_of_price_files = sys.argv[1:]
     prices = {}
     get_prices(prices)
+
     bigger_file = find_bigger_price_list(prices)
     price_dict = prices[bigger_file]
-    print("\t"*3 + bigger_file, end="")
-    for price_file_name in list_of_price_files:
-        if price_file_name != bigger_file:
-            print("\t" + price_file_name, end="")
-    print()
-    i=0
+    print_file_names(list_of_price_files, bigger_file)
+
     for name, price in price_dict.items():
         other_prices = [price]
         print("{})".format(i), end="")
@@ -63,7 +78,5 @@ if __name__ == '__main__':
             except KeyError:
                 pass
             other_prices.append(other_price)
-        print(name[:20] + ": ", end='', flush=True)
-        for other_price in other_prices:
-            print("{1:5.0f} {0:>10s} ".format("",clean_price(other_price)), end="")
-        print()
+        print_prices(other_prices)
+
