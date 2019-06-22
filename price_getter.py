@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import requests
 from bs4 import BeautifulSoup
 import random
 import sys
@@ -7,6 +6,7 @@ from datetime import datetime
 import threading
 import argparse
 from item import Item
+import os
 
 user_agent_list = [
    #Chrome
@@ -104,8 +104,10 @@ class PriceGetter:
         return prices
 
     def save_results(self, filename):
+        if "results" not in os.listdir("."):
+            os.makedirs("results")
         day = datetime.now().strftime("%d-%m-%Y")
-        out = open(day + ".txt", "w+")
+        out = open("results/" + day + ".txt", "w+")
         for key, value in self.price_list.items():
             out.write(key + ":" + value + "\n")
         out.close()

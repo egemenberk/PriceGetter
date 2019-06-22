@@ -35,10 +35,10 @@ def handle_exception(func):
     return wrapper
 
 class Item:
-    def __init__(self, url=None):
+    def __init__(self, url=None, name="", price=0):
         self.url = url
-        self.name = None
-        self.price = 0
+        self.name = name
+        self.price = price
         self.soup = None
         # From which tags to get price info
         self.price_tag_list = None

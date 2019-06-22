@@ -2,8 +2,8 @@
 import sys
 import re
 
-HEADER_SPACE = 23
-NAME_LEN = 20
+NAME_LEN = 30
+HEADER_SPACE = NAME_LEN + 3
 PRICE_SPACE = 7
 
 def clean_price(price):
@@ -42,16 +42,22 @@ def find_bigger_price_list(prices):
     return bigger_file
 
 def print_file_names(list_of_price_files, bigger_file):
-    print(" " * HEADER_SPACE + bigger_file.replace(".txt", ""), end="")
+    print(" " * HEADER_SPACE + bigger_file
+          .replace(".txt", "").replace("results/",""), end="")
+
     for price_file_name in list_of_price_files:
         if price_file_name != bigger_file:
-            print(" | " + price_file_name.replace(".txt", ""), end="")
+            print(" | " + price_file_name
+                  .replace(".txt", "").replace("results/",""), end="")
     print()
 
-def print_prices(other_prices):
-    print(name[:NAME_LEN] + ": ", end='', flush=True)
+def print_prices(name, other_prices):
+    site = name.rsplit("(", 1)[1].rsplit(")")[0]
+    name = name[:NAME_LEN-len(site)] + "(" + site + ")"
+    print(name + ": ", end='', flush=True)
     for other_price in other_prices:
         print("{1:5.0f} {0:>6s} ".format("",clean_price(other_price)), end="")
+    print()
     print()
 
 if __name__ == '__main__':
@@ -78,5 +84,5 @@ if __name__ == '__main__':
             except KeyError:
                 pass
             other_prices.append(other_price)
-        print_prices(other_prices)
+        print_prices(name, other_prices)
 
