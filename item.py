@@ -70,16 +70,7 @@ class Item:
             return "-"
         self.name = name_holder.text.strip() +  "(" + self.site_name + ")"
 
-    def clean_price(self, price):
-        price = price.replace(" ", "").upper().replace("TL", "").replace("₺", "")
-        price = price.replace("KDV", "").replace("DAHIL", "")
-        price = price.replace("\xa0", "").replace("\n", "")
-        return price
-
-    @handle_exception
-    def get_price(self):
-        tag_list = self.price_tag_list
-        price_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
+    def clean_price(self, price_holder):
         price = ""
 
         if price_holder == None:
@@ -101,7 +92,16 @@ class Item:
         else:
             price = price_holder.text.strip()
 
-        self.price = self.clean_price(price)
+        price = price.replace(" ", "").upper().replace("TL", "").replace("₺", "")
+        price = price.replace("KDV", "").replace("DAHIL", "")
+        price = price.replace("\xa0", "").replace("\n", "")
+        return price
+
+    @handle_exception
+    def get_price(self):
+        tag_list = self.price_tag_list
+        price_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
+        self.price = self.clean_price(price_holder)
 
     def extract_info(self):
         self.fetch_site_name()
