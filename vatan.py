@@ -67,7 +67,7 @@ def handle_args():
     args = parser.parse_args()
     return args
 
-def get_categories():
+def fetch_categories():
     categories = []
     page = requests.get(vatan)
     soup = BeautifulSoup(page.text, 'html.parser')
@@ -93,7 +93,7 @@ def fetch_page(page_url):
         break
     return None
 
-def get_category_page(category, *args):
+def fetch_category_page(category, *args):
     category_url = url + category + "/"
     if args:
         category_url = category_url + args[0]
@@ -104,13 +104,13 @@ def get_category_page(category, *args):
 
 def fetch_items_in_category(category):
     print("Fetching Category: {}".format(category))
-    page = get_category_page(category)
+    page = fetch_category_page(category)
     last_page = find_last_page(page)
 
     pages[1] = parse_page(page, category)
     for i in range(2, last_page+1):
         try:
-            page = get_category_page(category, next_page+str(i))
+            page = fetch_category_page(category, next_page+str(i))
         except Exception as e:
             print(e)
             break
@@ -125,7 +125,7 @@ if __name__ == '__main__':
         exit(0)
 
     if args.category == "all":
-        categories = get_categories()
+        categories = fetch_categories()
 
     else:
         categories.append(args.category)
