@@ -16,35 +16,17 @@ url = "https://www.vatanbilgisayar.com/"
 vatan = "https://www.vatanbilgisayar.com"
 
 categories = []
-proxies = proxy.working_proxies()
+proxies = None
 next_page = "?page="
 i = 1
 
-def get_name(item):
-    name = item.find("div", {"class":"ems-prd-name"})
-    if name == None:
-        return None
-    return name.text.strip()
-
-def get_url(item):
-    url = item.find("div", {"class":"ems-prd-name"})
-    if url == None:
-        return None
-    if url.find("a") == None:
-        return None
-    return url.find("a")["href"]
-
 def create_item_objects(products, category):
     list_of_items = []
-
     for soup in products:
-        url, name = get_url(soup), get_name(soup)
-
-        if name == None or url == None: # Unnecessary items in page
+        item = Item(url=vatan, soup=soup)
+        item.extract_info() # Get name, url and price
+        if item.name == None: # Unnecessary items in page
             continue
-
-        item = Item(vatan + url, name, price=0, soup=soup)
-        item.extract_info()
         list_of_items.append(item)
         ItemDb.create(url=item.url, name=item.name, price=item.price, category=category)
     return list_of_items
@@ -106,7 +88,6 @@ def fetch_items_in_category(category):
     print("Fetching Category: {}".format(category))
     page = get_category_page(category)
     last_page = find_last_page(page)
-
     pages[1] = parse_page(page, category)
     for i in range(2, last_page+1):
         try:
@@ -119,7 +100,7 @@ def fetch_items_in_category(category):
 if __name__ == '__main__':
     args = handle_args()
     pages = {}
-
+    #proxies = proxy.working_proxies()
     if args.category == None:
         print("Provide category")
         exit(0)
