@@ -1,4 +1,5 @@
 import requests
+import re
 from bs4 import BeautifulSoup
 
 NAME_TAGS = {"vatanbilgisayar":  ["div", "id", "plhUrunAdi"],
@@ -35,11 +36,11 @@ def handle_exception(func):
     return wrapper
 
 class Item:
-    def __init__(self, url=None, name="", price=0):
+    def __init__(self, url=None, name="", price=0, soup=None):
         self.url = url
         self.name = name
         self.price = price
-        self.soup = None
+        self.soup = soup
         # From which tags to get price info
         self.price_tag_list = None
         self.name_tag_list = None
@@ -64,6 +65,8 @@ class Item:
         self.site_name = self.url.split("www.")[1].split(".")[0]
 
     def get_name(self):
+        if self.name != "":
+            return
         tag_list = self.name_tag_list
         name_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
         if name_holder == None:
@@ -76,6 +79,9 @@ class Item:
         if price_holder == None:
             self.price = "0"
             return
+
+        if self.site_name == None:
+            self.fetch_site_name()
 
         if "vatanbilgisayar" in self.site_name:
             price = price_holder.text.split("TL")[0]
@@ -95,18 +101,33 @@ class Item:
         price = price.replace(" ", "").upper().replace("TL", "").replace("₺", "")
         price = price.replace("KDV", "").replace("DAHIL", "")
         price = price.replace("\xa0", "").replace("\n", "")
-        return price
+        self.price = price
+
+    def convert_price(self):
+        """ Gets String Returns Float
+        """
+        price = self.price.replace("\n", "").replace("\xa0","")
+        num = re.search('[0-9]+[\.|\,]?[0-9]+', price)
+        if num == None:
+            price = 0
+        else:
+            price = float(num.group().replace(",", "."))
+            if price < 10:
+                price *= 1000
+        self.price = price
 
     @handle_exception
     def get_price(self):
+        if self.price != 0:
+            return
         tag_list = self.price_tag_list
         price_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
-        self.price = self.clean_price(price_holder)
+        self.clean_price(price_holder)
+        self.convert_price()
 
     def extract_info(self):
         self.fetch_site_name()
         self.fetch_tags()
         self.get_name()
         self.get_price()
-        print(self.name, self.price)
 
