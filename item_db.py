@@ -18,8 +18,9 @@ db.create_tables([ItemDb])
 
 def print_items():
     for item in ItemDb.select():
-        print(item.name[:30], "\t", item.price, "\t",item.category, "\t",item.fetch_time)
-    print(len(ItemDb.select()))
+        if item.category == "islemciler":
+            print(item.name[:30], "\t", item.price, "\t",item.category, "\t",item.fetch_time)
+    #print(len(ItemDb.select()))
 
 if __name__ == '__main__':
     print_items()

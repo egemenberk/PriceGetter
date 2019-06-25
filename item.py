@@ -2,7 +2,11 @@ import requests
 import re
 from bs4 import BeautifulSoup
 
-NAME_TAGS = {"vatanbilgisayar":  ["div", "id", "plhUrunAdi"],
+URL_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"]
+
+            }
+
+NAME_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"],
              "hepsiburada": ["span", "itemprop","name"],
              "qp" : ["span", "class", "base"],
              "amazon": ["span", "id", "productTitle"],
@@ -36,7 +40,7 @@ def handle_exception(func):
     return wrapper
 
 class Item:
-    def __init__(self, url=None, name="", price=0, soup=None):
+    def __init__(self, url=None, name=None, price=0, soup=None):
         self.url = url
         self.name = name
         self.price = price
@@ -44,6 +48,7 @@ class Item:
         # From which tags to get price info
         self.price_tag_list = None
         self.name_tag_list = None
+        self.url_tags = None
         # Stripped site name
         self.site_name = None
 
@@ -60,12 +65,21 @@ class Item:
     def fetch_tags(self):
         self.name_tag_list = NAME_TAGS[self.site_name]
         self.price_tag_list = PRICE_TAGS[self.site_name]
+        self.url_tags = URL_TAGS[self.site_name]
 
     def fetch_site_name(self):
         self.site_name = self.url.split("www.")[1].split(".")[0]
 
+    def get_url(self):
+        url = item.find(self.url_tags[0], {self.url_tags[1]:self.url_tags[2]})
+        if url == None:
+            return None
+        if url.find("a") == None:
+            return None
+        return url.find("a")["href"]
+
     def get_name(self):
-        if self.name != "":
+        if self.name != None:
             return
         tag_list = self.name_tag_list
         name_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
