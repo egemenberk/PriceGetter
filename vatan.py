@@ -49,16 +49,6 @@ def create_item_objects(products, category):
         ItemDb.create(url=item.url, name=item.name, price=item.price, category=category)
     return list_of_items
 
-def prettify_name(name):
-    name = name[:NAME_LEN]
-    return name + " " * (NAME_LEN - len(name))
-
-def print_items(pages_dict):
-    for key, values in pages_dict.items():
-        print("Page No: ", key)
-        for item in values:
-            print("\t", item.name, item.price)
-
 def find_last_page(page):
     soup = BeautifulSoup(page.text, 'html.parser')
     last_page = soup.find("a", {"class": "emos_invisible lastPage"})
@@ -76,26 +66,6 @@ def handle_args():
     parser.add_argument("-c", "--category", help="Fetch the prices from given category")
     args = parser.parse_args()
     return args
-
-def create_dir(path):
-    if not os.path.exists(path):
-        os.makedirs(path)
-
-def save_results(pages_dict, category):
-    path = "vatan"
-    create_dir(path)
-    path = path + "/" + category + "/"
-    create_dir(path)
-
-    day = datetime.datetime.now().strftime("%d-%m-%Y")
-    price_out = open(path + "/" + day + ".txt", "w+")
-    url_out = open(path + "/" + "url_" + day  + ".txt", "w+")
-    for key, values in pages_dict.items():
-        for item in values:
-            price_out.write(item.name + ":" + item.price + "\n")
-            url_out.write(vatan + item.url + "\n")
-    price_out.close()
-    url_out.close()
 
 def get_categories():
     categories = []
