@@ -37,3 +37,6 @@ class Category():
         for page in self.pages:
             page.fetch_page()
             page.fetch_items()
+            self.pages.remove(page)
+
+

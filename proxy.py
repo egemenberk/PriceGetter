@@ -25,7 +25,6 @@ def get_table(soup):
     return table
 
 def get_proxies():
-    print("Fetching Proxies")
     url = "http://spys.one/en/http-proxy-list/"
     proxies = {}
 
@@ -43,15 +42,16 @@ def get_proxies():
             latency = float(tds[5].find("font").text)
             proxies[proxy_url] = (proxy_type, latency)
         #proxy_list = sorted(proxies, key=lambda k: proxies[k][1], reverse=False)
+    print("# of proxies fetched: " + str(len(proxies)))
     return proxies
 
 def working_proxies(test_url):
     proxies = get_proxies()
-    print("Eliminating non-working ones")
     working_ones = {}
     for url, val in proxies.items():
         if test(test_url, (val[0], url)) != None:
             working_ones[url] = val
+    print("# of working_proxies: " + str(len(working_ones)))
     return working_ones
 
 if __name__ == '__main__':

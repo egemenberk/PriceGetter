@@ -16,9 +16,10 @@ class Page():
             page = requests.get(self.url)
             self.soup = BeautifulSoup(page.text, 'html.parser')
             return self.soup
-        except:
-            pass
-        for url, val in proxies.items():
+        except Exception as e:
+            print(e)
+
+        for url, val in self.proxies.items():
             print("Trying with new proxy:", url)
             try:
                 page = requests.get(page_url, proxies= {val[0]: url}, timeout=1)
@@ -37,6 +38,7 @@ class Page():
             item = Item(url=self.url, soup=soup)
             item.extract_info() # Get item item name, url and price
             if item.name == None: # Unnecessary items in page
+                print("EMPTY NAME")
                 continue
             #self.items.append(item)
             ItemDb.create(url=item.url, name=item.name, price=item.price, category=self.category)

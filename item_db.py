@@ -20,8 +20,8 @@ db.create_tables([ItemDb])
 
 def print_items(category):
     for item in ItemDb.select():
-        if item.category == category:
-            print(item.name[:30], "\t", item.price, "\t",item.category, "\t",item.fetch_time)
+        if category in item.category:
+            print(item.name[:30], "\t", "₺" + str(item.price), "\t",item.category, "\t",item.fetch_time)
     #print(len(ItemDb.select()))
 
 def handle_args():
