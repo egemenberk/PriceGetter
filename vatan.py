@@ -113,5 +113,4 @@ if __name__ == '__main__':
 
     for category in tqdm(categories):
         fetch_items_in_category(category)
-       #save_results(pages, category)
 

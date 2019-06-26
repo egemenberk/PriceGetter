@@ -11,7 +11,7 @@ proxies = {
 }
 #"https": 'https://95.179.197.111:3128'
 
-def test(proxy):
+def test(test_url, proxy):
     proxies = {proxy[0].lower(): "http://" + proxy[1]}
     try:
         response = requests.get(test_url,proxies=proxies, timeout=1)
@@ -45,12 +45,12 @@ def get_proxies():
         #proxy_list = sorted(proxies, key=lambda k: proxies[k][1], reverse=False)
     return proxies
 
-def working_proxies():
+def working_proxies(test_url):
     proxies = get_proxies()
     print("Eliminating non-working ones")
     working_ones = {}
     for url, val in proxies.items():
-        if test((val[0], url)) != None:
+        if test(test_url, (val[0], url)) != None:
             working_ones[url] = val
     return working_ones
 
