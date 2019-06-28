@@ -22,7 +22,7 @@ class Page():
         for url, val in self.proxies.items():
             print("Trying with new proxy:", url)
             try:
-                page = requests.get(page_url, proxies= {val[0]: url}, timeout=1)
+                page = requests.get(self.url, proxies= {val[0]: url}, timeout=1)
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 return self.soup
             except Exception as e:

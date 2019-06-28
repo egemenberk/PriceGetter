@@ -16,7 +16,7 @@ def handle_args():
 if __name__ == '__main__':
     args = handle_args()
     #proxies = proxy.working_proxies()
-    site = Site(url, proxy_enabled=1, thread_no=8)
+    site = Site(url, proxy_enabled=1, thread_no=12)
 
     if args.category == None:
         print("Provide category")
