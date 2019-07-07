@@ -62,21 +62,22 @@ class Item:
         self.soup = BeautifulSoup(page.text, 'html.parser')
         return "success"
 
-    def fetch_tags(self):
+    def fetch_tags(self, url_set):
         self.name_tag_list = NAME_TAGS[self.site_name]
         self.price_tag_list = PRICE_TAGS[self.site_name]
-        self.url_tags = URL_TAGS[self.site_name]
+        if url_set == False:
+            self.url_tags = URL_TAGS[self.site_name]
 
     def fetch_site_name(self):
         self.site_name = self.url.split("www.")[1].split(".")[0]
 
     def get_url(self):
-        url = item.find(self.url_tags[0], {self.url_tags[1]:self.url_tags[2]})
+        url = self.soup.find(self.url_tags[0], {self.url_tags[1]:self.url_tags[2]})
         if url == None:
-            return None
+            self.url = None
         if url.find("a") == None:
-            return None
-        return url.find("a")["href"]
+            self.url = None
+        self.url = url.find("a")["href"]
 
     def get_name(self):
         if self.name != None:
@@ -139,9 +140,11 @@ class Item:
         self.clean_price(price_holder)
         self.convert_price()
 
-    def extract_info(self):
+    def extract_info(self, url_set=True):
         self.fetch_site_name()
-        self.fetch_tags()
+        self.fetch_tags(url_set)
         self.get_name()
         self.get_price()
+        if url_set == False:
+            self.get_url()
 

@@ -28,7 +28,7 @@ def search_item(name):
 
 def print_all_items():
     for item in ItemDb.select():
-        print(item.name[:30], "\t", "₺" + str(item.price), "\t",item.category)
+        print(item.name[:30], "\t", "₺" + str(item.price), "\t",item.category, item.url)
 
 def print_items_time(category):
     for item in ItemDb.select():

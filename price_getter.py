@@ -7,6 +7,8 @@ import threading
 import argparse
 from item import Item
 import os
+from item_db import ItemDb
+from mail import send_mail
 
 user_agent_list = [
    #Chrome
@@ -90,6 +92,7 @@ class PriceGetter:
             item.extract_info()
             with self.price_list_lock:
                 self.price_list[item.name] = item.price
+            ItemDb.create(url=item.url, name=item.name, price=item.price)
 
     def read_urls(self, filename):
         with open(filename, "r") as url_file:
@@ -112,6 +115,18 @@ class PriceGetter:
             out.write(key + ":" + value + "\n")
         out.close()
 
+    def make_link(self, item):
+        link = "<a href=" + item.url + ">" + item.name[:20] + "</a>" + ": " + str(item.price) + " TL<br>"
+        return link
+
+    def e_mail(self):
+        prices = []
+        for item in self.item_list:
+            prices.append(self.make_link(item))
+        day = datetime.now().strftime("%d-%m-%Y")
+        message = "".join(prices)
+        send_mail(message.encode("ascii", errors="ignore").decode(), day)
+
 if __name__ == '__main__':
 
     args = handle_args()
@@ -127,6 +142,7 @@ if __name__ == '__main__':
         item = PriceGetter()
         item.read_urls(filename)
         item.get_soups(thread_number=thread_number)
-        item.save_results(filename)
+        item.e_mail()
+        #item.save_results(filename)
 
 

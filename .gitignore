@@ -1,3 +1,9 @@
 *.txt
 __pycache__
 *.swp
+credentials*
+.*
+my_database.db
+test.py
+vatan/
+TODO
