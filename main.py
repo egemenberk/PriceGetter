@@ -9,7 +9,7 @@ next_page = "?page="
 
 def handle_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-c", "--category", help="Fetch the prices from given category")
+    parser.add_argument("-c", "--category", help="Fetch the prices from given category or all categories")
     args = parser.parse_args()
     return args
 

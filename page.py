@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from item import *
 from item_db import ItemDb
+import logging
 
 class Page():
     def __init__(self, url, category=None, proxies={}):
@@ -17,7 +18,8 @@ class Page():
             self.soup = BeautifulSoup(page.text, 'html.parser')
             return self.soup
         except Exception as e:
-            print(e)
+            logging.exception("first try in fetch_page")
+            #print(e)
 
         for url, val in self.proxies.items():
             print("Trying with new proxy:", url)
@@ -26,7 +28,8 @@ class Page():
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 return self.soup
             except Exception as e:
-                print(e)
+                logging.exception("with proxy in fetch_page")
+                #print(e)
                 continue
             break
         return None
