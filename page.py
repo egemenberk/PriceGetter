@@ -3,14 +3,16 @@ from bs4 import BeautifulSoup
 from item import *
 from item_db import ItemDb
 import logging
+import gc
 
 class Page():
-    def __init__(self, url, category=None, proxies={}):
+    def __init__(self, url, category=None, proxies={}, db_lock=None):
         self.url = url
         self.soup = None
         self.items = []
         self.category = category
         self.proxies = proxies
+        self.db_lock = db_lock
 
     def fetch_page(self):
         try:
@@ -36,7 +38,6 @@ class Page():
 
     def fetch_items(self):
         products = self.soup.find_all("div", {"class":"ems-prd-inner"})
-        list_of_items = []
         for soup in products:
             item = Item(url=self.url, soup=soup)
             item.extract_info() # Get item item name, url and price
@@ -44,5 +45,8 @@ class Page():
                 print("EMPTY NAME")
                 continue
             #self.items.append(item)
-            ItemDb.create(url=item.url, name=item.name, price=item.price, category=self.category)
-
+            with self.db_lock:
+                ItemDb.create(url=item.url, name=item.name, price=item.price, category=self.category)
+            item = None
+        products = None
+        gc.collect()

@@ -1,7 +1,8 @@
+import gc
 from page import Page
 
 class Category():
-    def __init__(self, url, category, proxies={}, appendix=""):
+    def __init__(self, url, category, proxies={}, appendix="", db_lock=None):
         self.url = url
         self.category = category
         self.proxies = proxies
@@ -13,6 +14,8 @@ class Category():
         self.first_page = None
         self.last_page_no = None
 
+        self.db_lock = db_lock
+
     def _find_last_page(self):
         last_page = self.first_page.soup.find("a", {"class": "emos_invisible lastPage"})
         if last_page == None:
@@ -20,7 +23,7 @@ class Category():
         return int(last_page["href"].split("page=")[1])
 
     def fetch_first_page(self):
-        self.first_page = Page(self.url, self.category, self.proxies)
+        self.first_page = Page(self.url, self.category, self.proxies, self.db_lock)
         self.pages.append(self.first_page)
         self.first_page.fetch_page()
 
@@ -29,7 +32,7 @@ class Category():
         self.last_page_no = self._find_last_page()
         for i in range(2, self.last_page_no+1):
             url = self.url + self.next_page_appendix + str(i)
-            page = Page(url=url, category=self.category)
+            page = Page(url=url, category=self.category, db_lock = self.db_lock)
             self.pages.append(page)
 
     def parse_pages(self):
@@ -38,5 +41,7 @@ class Category():
             page.fetch_page()
             page.fetch_items()
             self.pages.remove(page)
+            page = None
+        gc.collect()
 
 

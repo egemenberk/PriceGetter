@@ -5,6 +5,7 @@ from price_getter import split
 import threading
 from category import Category
 from page import Page
+from threading import Lock
 
 # TODO generilaze this class for to be used with other websites
 class Site():
@@ -13,16 +14,18 @@ class Site():
         self.categories = []
         self.proxies = {}
         self.thread_no = thread_no # DO NOT set it as 0
+        self.db_lock = Lock()
         if proxy_enabled:
             self.proxies = proxy.get_proxies()
 
     def fetch_categories(self):
-        page = Page(self.url, proxies=self.proxies)
+        page = Page(self.url, proxies=self.proxies, db_lock=self.db_lock)
         soup = page.fetch_page()
         cats = soup.find_all("div", {"class":"cat-name"})
         for cat in cats:
             cat_name = cat.find("a")["href"]
-            category = Category(self.url + cat_name, cat_name, self.proxies, "/?page=")
+            category = Category(self.url + cat_name, cat_name,
+                                self.proxies, "/?page=", self.db_lock)
             self.categories.append(category)
 
     def fetch_items_in_category(self, category):
@@ -47,5 +50,4 @@ class Site():
 
         for thread in threads:
             thread.join()
-
 

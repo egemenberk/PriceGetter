@@ -23,10 +23,14 @@ def print_item(item):
 
 def search_item(name):
     for item in ItemDb.select():
-        if name in item.name:
+        if name.upper() in item.name.upper():
             print_item(item)
 
-def print_items(category):
+def print_all_items():
+    for item in ItemDb.select():
+        print(item.name[:30], "\t", "₺" + str(item.price), "\t",item.category)
+
+def print_items_time(category):
     for item in ItemDb.select():
         #if category in item.category:
         diff = datetime.datetime.now() - item.fetch_time
@@ -53,6 +57,8 @@ def delete(category):
 
 if __name__ == '__main__':
     args = handle_args()
+    if args.all:
+        print_all_items()
     if args.category:
         print_items(args.category)
     if args.search:

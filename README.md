@@ -6,9 +6,6 @@ The result is saved in a file
 # item_db.py
 This module uses peewee ORM to save fetched products in sqlite database.
 
-# vatan.py
-This script fetches list of products from a category or from all categories.
-
 # proxy.py
 This scipt fetches available proxies to be later used with requests.get()
 Because some sites ban abusive scraping methods that we are using with threading
