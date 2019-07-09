@@ -55,12 +55,15 @@ class Item:
     def fetch_soup(self, headers=None):
         try:
             page = requests.get(self.url, headers=headers)
+            if page.status_code > 500:
+                print("Server Error")
+                return None
         except Exception as e:
             print("EXCEPTION occured while fetching soup")
             print(e)
             return None
         self.soup = BeautifulSoup(page.text, 'html.parser')
-        return "success"
+        return 1
 
     def fetch_tags(self, url_set):
         self.name_tag_list = NAME_TAGS[self.site_name]

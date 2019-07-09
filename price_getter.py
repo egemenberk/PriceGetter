@@ -63,8 +63,7 @@ def singleton(cls):
 class PriceGetter:
     def __init__(self, item_list=[]):
         self.item_list = item_list
-        self.price_list_lock = threading.Lock()
-        self.price_list = {}
+        self.db_lock = threading.Lock()
         self.user_agent_list = user_agent_list
         self.headers = {"User-Agent": user_agent_list[0]}
 
@@ -87,34 +86,22 @@ class PriceGetter:
 
     def get_soups_helper(self, item_list):
         for item in item_list:
-            while item.fetch_soup(self.headers) == None:
+            status = item.fetch_soup(self.headers) 
+            if status != None:
                 self.generate_new_header()
+            elif status == None:
+                item_list.remove(item)
+                continue
             item.extract_info()
-            with self.price_list_lock:
-                self.price_list[item.name] = item.price
-            ItemDb.create(url=item.url, name=item.name, price=item.price)
+            with self.db_lock:
+                ItemDb.create(url=item.url, name=item.name, price=item.price)
 
     def read_urls(self, filename):
         with open(filename, "r") as url_file:
             for line in url_file:
                 item = Item(line.rstrip())
                 self.item_list.append(item)
-
-    def __str__(self):
-        prices = ""
-        for key, value in self.price_list.items():
-            prices += key + ": " + value + "\n"
-        return prices
-
-    def save_results(self, filename):
-        if "results" not in os.listdir("."):
-            os.makedirs("results")
-        day = datetime.now().strftime("%d-%m-%Y")
-        out = open("results/" + day + ".txt", "w+")
-        for key, value in self.price_list.items():
-            out.write(key + ":" + value + "\n")
-        out.close()
-
+    
     def make_link(self, item):
         link = "<a href=" + item.url + ">" + item.name[:20] + "</a>" + ": " + str(item.price) + " TL<br>"
         return link
@@ -143,6 +130,4 @@ if __name__ == '__main__':
         item.read_urls(filename)
         item.get_soups(thread_number=thread_number)
         item.e_mail()
-        #item.save_results(filename)
-
 
