@@ -52,6 +52,10 @@ class Item:
         # Stripped site name
         self.site_name = None
 
+    def update(self):
+        fetch_soup()
+        get_price()
+
     def fetch_soup(self, headers=None):
         try:
             page = requests.get(self.url, headers=headers)

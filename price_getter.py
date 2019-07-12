@@ -87,10 +87,8 @@ class PriceGetter:
     def get_soups_helper(self, item_list):
         for item in item_list:
             status = item.fetch_soup(self.headers) 
-            if status != None:
-                self.generate_new_header()
-            elif status == None:
-                item_list.remove(item)
+            if status == None:
+                self.item_list.remove(item)
                 continue
             item.extract_info()
             with self.db_lock:
@@ -99,11 +97,11 @@ class PriceGetter:
     def read_urls(self, filename):
         with open(filename, "r") as url_file:
             for line in url_file:
-                item = Item(line.rstrip())
+                item = Item(url=line.rstrip())
                 self.item_list.append(item)
     
     def make_link(self, item):
-        link = "<a href=" + item.url + ">" + item.name[:20] + "</a>" + ": " + str(item.price) + " TL<br>"
+        link = "<a href=" + item.url + ">" + item.name[:30] + "</a>" + ": " + str(item.price) + " TL<br>"
         return link
 
     def e_mail(self):
