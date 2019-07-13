@@ -53,8 +53,8 @@ class Item:
         self.site_name = None
 
     def update(self):
-        fetch_soup()
-        get_price()
+        self.fetch_soup()
+        self.get_price()
 
     def fetch_soup(self, headers=None):
         try:
@@ -148,6 +148,8 @@ class Item:
         self.convert_price()
 
     def extract_info(self, url_set=True):
+        if self.soup == None:
+            self.fetch_soup()
         self.fetch_site_name()
         self.fetch_tags(url_set)
         self.get_name()

@@ -86,7 +86,7 @@ class PriceGetter:
 
     def get_soups_helper(self, item_list):
         for item in item_list:
-            status = item.fetch_soup(self.headers) 
+            status = item.fetch_soup(self.headers)
             if status == None:
                 self.item_list.remove(item)
                 continue
@@ -99,7 +99,7 @@ class PriceGetter:
             for line in url_file:
                 item = Item(url=line.rstrip())
                 self.item_list.append(item)
-    
+
     def make_link(self, item):
         link = "<a href=" + item.url + ">" + item.name[:30] + "</a>" + ": " + str(item.price) + " TL<br>"
         return link
