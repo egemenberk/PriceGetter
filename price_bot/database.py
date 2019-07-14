@@ -26,16 +26,19 @@ class ItemDb(BaseModel):
 db.create_tables([UserDb, ItemDb])
 
 
+def get_user(user_id):
+    return UserDb.get_or_none(UserDb.id == user_id)
+
 def print_users():
     for user in UserDb.select():
         print(user.name, user.id)
 
 
 def print_items():
-    for item in ItemdDb.select():
+    for item in ItemDb.select():
         print(item.name[:25], item.owner)
 
 
 def get_user_items(user_id):
-    return ItemDb.select().where(UserDb.owner == user_id)
+    return ItemDb.select().where(ItemDb.owner == user_id)
 

@@ -50,7 +50,7 @@ class User:
         for item in self.item_list:
             result.append("Price of the item is ₺" + str(int(item.price)))
         if len(result) == 0:
-            return "You have not registered any item"
+            return "You have not added any item, type /add url"
         return "".join(result)
 
     def get_item_names(self):
@@ -61,7 +61,7 @@ class User:
         result = []
         for i in range(len(self.item_list)):
             item = self.item_list[i]
-            result.append(str(i+1) + "-) " + item.name[:25])
+            result.append(str(i+1) + "-) " + item.name[:25] + "\n")
         if len(result) == 0:
             return "You have not registered any item"
         return "".join(result)
@@ -160,18 +160,32 @@ def delete_item(message):
 @bot.message_handler(commands=['list'])
 def list_items(message):
     user = server.get_user(message.from_user.id)
+    if user == None:
+        echo_all(message)
+        return
     items = user.get_item_names()
     bot.send_message(message.chat.id, items)
+
+def check_registered(func):
+    def wrapper_check(*args, **kwargs):
+        if user == None:
+            echo_all(message)
+            return
+        func(*args, **kwargs)
+    return wrapper_check
+
 
 #TODO
 @bot.message_handler(commands=['fetch'])
 def notify_user(message):
     """ Notify user when price of any item is changed
     """
-    user = server.users[message.from_user.id]
+    user = server.get_user(message.from_user.id)
+    if user == None:
+        echo_all(message)
+        return
     prices = user.get_prices()
     bot.reply_to(message, prices)
-
 
 @bot.message_handler(func=lambda message: True)
 def echo_all(message):
