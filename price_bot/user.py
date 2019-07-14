@@ -22,6 +22,16 @@ class User:
                                 url=item.url)
         self.item_list.append(item)
 
+    def items_to_string(self, item_list):
+        result = []
+        for i in range(len(item_list)):
+            item = self.item_list[i]
+            result.append(str(i+1) + "-) "
+                          + item.name[:25]
+                          + ": ₺" + str(int(item.price))
+                          + "\n")
+        return result
+
     def check_prices(self):
         updated_items = []
 
@@ -32,20 +42,16 @@ class User:
             if old_price != item.price:
                 updated_items.append(item)
 
-        notify_user(updated_items)
+        result = self.items_to_string(updated_items)
+
+        return result
 
     def get_item_list(self):
 
         if len(self.item_list) == 0:
             self.get_items_from_database()
 
-        result = []
-        for i in range(len(self.item_list)):
-            item = self.item_list[i]
-            result.append(str(i+1) + "-) "
-                          + item.name[:25]
-                          + ": ₺" + str(int(item.price))
-                          + "\n")
+        result = self.items_to_string(self.item_list)
 
         if len(result) == 0:
             return "You have not added any item, type /add url"

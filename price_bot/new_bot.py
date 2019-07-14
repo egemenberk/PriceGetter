@@ -1,4 +1,5 @@
 import logging
+import telegram
 
 logging.basicConfig(filename="log", level=logging.DEBUG,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -20,8 +21,29 @@ token = open('token', 'r').read().strip()
 bot = Bot(token=token)
 updater = Updater(token=token, use_context=True)
 dispatcher = updater.dispatcher
+j = updater.job_queue
 
 server = Server()
+
+def callback_alarm(context: telegram.ext.CallbackContext):
+    user_id = context.job.context
+    user = server.get_user(user_id)
+    updated_items = user.check_prices()
+
+    if len(updated_items):
+        context.bot.send_message(chat_id=context.job.context,
+                                 text=updated_items)
+    else:
+        context.bot.send_message(chat_id=context.job.context,
+                                 text="No change in item prices")
+
+
+def callback_timer(update: telegram.Update, context: telegram.ext.CallbackContext):
+    context.bot.send_message(chat_id=update.message.chat_id,
+                             text='I will notify if price of any item changes!')
+    hour = 10
+    context.job_queue.run_repeating(callback_alarm, hour, context=update.message.chat_id)
+
 
 def reply(update, text):
     update.message.reply_text(text)
@@ -91,10 +113,12 @@ echo_handler = CommandHandler('echo', echo)
 start_handler = CommandHandler('start', start)
 add_item_handler = CommandHandler('add', add)
 help_handler = CommandHandler('help', helper)
+timer_handler = CommandHandler('notify', callback_timer)
 
 dispatcher.add_handler(start_handler)
 dispatcher.add_handler(add_item_handler)
 dispatcher.add_handler(list_item_handler)
 dispatcher.add_handler(help_handler)
 dispatcher.add_handler(echo_handler)
+dispatcher.add_handler(timer_handler)
 updater.start_polling()
