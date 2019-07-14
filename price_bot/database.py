@@ -1,3 +1,4 @@
+import datetime
 from peewee import *
 
 
@@ -22,6 +23,7 @@ class ItemDb(BaseModel):
     url = CharField()
     price = IntegerField()
     owner = ForeignKeyField(UserDb, backref="item_owner")
+    #fetch_time = DateTimeField(default=datetime.datetime.now)
 
 db.create_tables([UserDb, ItemDb])
 
@@ -36,7 +38,7 @@ def print_users():
 
 def print_items():
     for item in ItemDb.select():
-        print(item.name[:25], item.owner)
+        print("Name: {}, Price: {}, OwnerId: {}".format(item.name[:25], item.price ,item.owner))
 
 
 def get_user_items(user_id):

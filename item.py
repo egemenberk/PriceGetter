@@ -54,7 +54,7 @@ class Item:
 
     def update(self):
         self.fetch_soup()
-        self.get_price()
+        self.extract_info()
 
     def fetch_soup(self, headers=None):
         try:
@@ -140,8 +140,6 @@ class Item:
 
     @handle_exception
     def get_price(self):
-        if self.price != 0:
-            return
         tag_list = self.price_tag_list
         price_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
         self.clean_price(price_holder)

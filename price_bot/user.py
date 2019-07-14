@@ -25,7 +25,7 @@ class User:
     def items_to_string(self, item_list):
         result = []
         for i in range(len(item_list)):
-            item = self.item_list[i]
+            item = item_list[i]
             result.append(str(i+1) + "-) "
                           + item.name[:25]
                           + ": ₺" + str(int(item.price))
@@ -34,17 +34,19 @@ class User:
 
     def check_prices(self):
         updated_items = []
-
         for item in self.item_list:
             old_price = item.price
             item.update()
 
             if old_price != item.price:
                 updated_items.append(item)
+                db_item = db.ItemDb.get(ItemDb.url==item.url)
+                db_item.price = item.price
+                db_item.save()
 
         result = self.items_to_string(updated_items)
 
-        return result
+        return "".join(result)
 
     def get_item_list(self):
 

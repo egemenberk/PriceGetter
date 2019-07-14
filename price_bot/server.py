@@ -30,6 +30,7 @@ class Server:
             if user:
                 custom_user = User(user_id, user.name)
                 self.users[user_id] = custom_user
+                custom_user.get_items_from_database()
                 return custom_user
             return None
 

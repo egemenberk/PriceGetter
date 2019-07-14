@@ -30,7 +30,7 @@ def callback_alarm(context: telegram.ext.CallbackContext):
     user = server.get_user(user_id)
     updated_items = user.check_prices()
 
-    if len(updated_items):
+    if updated_items == "":
         context.bot.send_message(chat_id=context.job.context,
                                  text=updated_items)
     else:
@@ -41,8 +41,8 @@ def callback_alarm(context: telegram.ext.CallbackContext):
 def callback_timer(update: telegram.Update, context: telegram.ext.CallbackContext):
     context.bot.send_message(chat_id=update.message.chat_id,
                              text='I will notify if price of any item changes!')
-    hour = 10
-    context.job_queue.run_repeating(callback_alarm, hour, context=update.message.chat_id)
+    hour = 5
+    context.job_queue.run_once(callback_alarm, hour, context=update.message.chat_id)
 
 
 def reply(update, text):
