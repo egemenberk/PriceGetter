@@ -34,7 +34,7 @@ def helper(update, context):
 	"start": "Registers you to the system",
 	"help": "Shows this message",
 	"add": "Adds new product to your list",
-	"fetch": "Fetch prices of the items in list"
+	"list": "Fetches prices of the items in list"
     }
 
     for key in commands:
