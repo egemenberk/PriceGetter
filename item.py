@@ -15,7 +15,8 @@ NAME_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"],
              "trendyol": ["div", "class", "pr-in-nm"],
              "itopya": ["h1", "class", "name"],
              "sinerji": ["h1", "itemprop", "name"],
-             "gameekstra": ["div", "id", "urun_adi"]
+             "gameekstra": ["div", "id", "urun_adi"],
+             "n11": ["div", "class", "nameHolder"]
              }
 
 PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
@@ -27,7 +28,8 @@ PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
              "trendyol": ["span", "class", "prc-slg"],
              "itopya": ["div", "class", "new text-right"],
              "sinerji": ["div", "class", "urun_fiyati"],
-             "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"]
+             "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"],
+             "n11": ["div", "class", "newPrice"]
              }
 
 def handle_exception(func):
@@ -89,7 +91,16 @@ class Item:
             self.url_tags = URL_TAGS[self.site_name]
 
     def fetch_site_name(self):
-        self.site_name = self.url.split("www.")[1].split(".")[0]
+        if "www." in self.url:
+            self.site_name = self.url.split("www.")[1].split(".")[0]
+        else:
+            self.site_name = self.url.split("://")[1].split(".")[0]
+
+        try:
+            NAME_TAGS[self.site_name]
+        except: # Some fucking sites having fucking names
+            if self.site_name == "urun":
+                self.site_name = "n11"
 
     def get_url(self):
         url = self.soup.find(self.url_tags[0], {self.url_tags[1]:self.url_tags[2]})

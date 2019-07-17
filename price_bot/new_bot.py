@@ -171,7 +171,8 @@ if __name__ == '__main__':
     dispatcher.add_handler(echo_handler)
 
     server.start()
-    ten_min = 10 * 60
+    print("Server has started")
+    ten_min = 5 * 60
     j.run_repeating(callback_alarm, interval=ten_min)
 
     updater.start_polling()
