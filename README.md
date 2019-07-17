@@ -27,5 +27,11 @@ are provided by the user through telegram client
 # Requirements
 pip3 install beautifulsoup4
 
+## For price_bot
+    pip3 install peewee
+    pip3 install validators
+    pip3 install python-telegram-bot==12.0.0b1 --upgrade
+
 # Usage 
 python3 price_getter.py \<file containing prices\>
+

@@ -7,3 +7,7 @@ my_database.db
 test.py
 vatan/
 TODO
+price_bot/log
+price_bot/token
+misc
+
