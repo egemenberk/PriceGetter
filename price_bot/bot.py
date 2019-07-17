@@ -6,8 +6,7 @@ logging.basicConfig(filename="log", level=logging.ERROR,
 
 from telegram import Bot
 from telegram.ext import Updater
-from telegram.ext import CommandHandler, CallbackQueryHandler
-from telegram.ext import MessageHandler, Filters
+from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler
 import time
 import sys
 sys.path.insert(0, './../')
@@ -87,17 +86,34 @@ def helper(update, context):
 
     reply(update, help_text)  # send the generated help page
 
+NAME = 1
 
 def start(update, context):
     user_id = update.message.chat_id
-    name = update.message.chat.first_name
 
     if server.is_registered(user_id):
         update.message.reply_text("You've already registered")
         return
+    
+    update.message.reply_text("Hello, welcome to the PriceGetter Bot\n" 
+                             +"What is your name?" )
 
+    return NAME
+
+
+def name(update, context):
+    user_id = update.message.chat_id
+    name = update.message.text
     server.create_user(user_id, name)
-    update.message.reply_text("You can use /help command to learn how to use this bot")
+    update.message.reply_text("Hello " + name 
+                            + ", You are registered now"
+							+ ", you can start adding items to your list by typing /add url\n"
+							+ ", you can also use /help command to learn how to use this bot")
+    return ConversationHandler.END
+
+def cancel(update, context):
+    reply(update, 'Bye! I hope we can talk again some day.')
+    return ConversationHandler.END
 
 def must_register_first(func):
     def wrapper(*args, **kwargs):
@@ -177,6 +193,11 @@ if __name__ == '__main__':
     help_handler = CommandHandler('help', helper)
     delete_handler = CommandHandler('delete', delete)
     suppor_list_handler = CommandHandler('support', support_list)
+	conversation_handler = ConversationHandler(
+							entry_points=[CommandHandler('start', start)],
+							states={
+									NAME: [MessageHandler(Filters.text, name)]									},
+							fallbacks=[CommandHandler('cancel', cancel)]
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(add_item_handler)
@@ -185,6 +206,7 @@ if __name__ == '__main__':
     dispatcher.add_handler(delete_handler)
     dispatcher.add_handler(suppor_list_handler)
     dispatcher.add_handler(echo_handler)
+    dispatcher.add_handler(conversation_handler)
 
     server.start()
     print("Server has started")
