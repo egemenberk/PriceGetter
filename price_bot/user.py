@@ -3,6 +3,8 @@ import sys
 sys.path.insert(0, './../')
 from item import Item
 
+NAME_LEN = 30
+
 class User:
 
     def __init__(self, user_id, name=''):
@@ -13,21 +15,35 @@ class User:
 
         self.item_list = []
 
-    def add_item(self, url):
+    def add_item(self, url, name=None):
         item = Item(url)
         item.extract_info() # fetch soup and then name, price etc..
-        db.ItemDb.get_or_create(owner=self.id,
+
+        if name: # User has provided custom name
+            item.name = name
+
+        created = db.ItemDb.get_or_none(db.ItemDb.owner == self.id,
+                                db.ItemDb.url == url)
+
+        if created: # Item is already added
+            return True
+
+        item = db.ItemDb.create(owner=self.id,
                                 name=item.name,
                                 price=int(item.price),
                                 url=item.url)
+
+
         self.item_list.append(item)
 
     def items_to_string(self, item_list):
         result = []
         for i in range(len(item_list)):
             item = item_list[i]
-            result.append(str(i+1) + "-) "
-                          + item.name[:25]
+            # Sending text with Markdown support
+            result.append(str(i+1) + "-) " + "["
+                          + item.name[:NAME_LEN] + "]"
+                          + "(" + item.url + ")"
                           + ": ₺" + str(int(item.price))
                           + "\n")
         return result
@@ -37,16 +53,16 @@ class User:
         for item in self.item_list:
             old_price = item.price
             item.update()
-
-            if old_price != item.price:
-                updated_items.append(item)
-                db_item = db.ItemDb.get(ItemDb.url==item.url)
+            if int(old_price) != int(item.price):
+                updated_items.append(item.name[:NAME_LEN]
+                                     + " has become " + str(item.price)
+                                     + " previously was "
+                                     + str(old_price) + "\n")
+                db_item = db.ItemDb.get(db.ItemDb.url==item.url)
                 db_item.price = item.price
                 db_item.save()
 
-        result = self.items_to_string(updated_items)
-
-        return "".join(result)
+        return "".join(updated_items)
 
     def get_item_list(self):
 
@@ -71,4 +87,19 @@ class User:
 
         return self.item_list
 
+    def remove_item(self, item_no):
+        item_list =  db.get_user_items(self.id)
+        i=1
+        for item in item_list: # Since item_list is fucking ModelSelect object
+            # I cannot call range(item_list) FUCK IT FUCK FUCK FUCK
+            if i == item_no:
+                try:
+                    if item.delete_instance():
+                        del self.item_list[i-1]
+                        return "Deleted the item succesfully"
+                except Exception as e:
+                    print(e)
+                    return "Some error happened, uuppss"
+            i += 1
 
+        return "Please provide valid item number"

@@ -53,7 +53,6 @@ class Item:
         self.site_name = None
 
     def update(self):
-        self.fetch_soup()
         self.extract_info()
 
     def fetch_soup(self, headers=None):
