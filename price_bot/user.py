@@ -3,7 +3,7 @@ import sys
 sys.path.insert(0, './../')
 from item import Item
 
-NAME_LEN = 30
+NAME_LEN = 25
 
 class User:
 
@@ -54,10 +54,11 @@ class User:
             old_price = item.price
             item.update()
             if int(old_price) != int(item.price):
-                updated_items.append(item.name[:NAME_LEN]
-                                     + " has become " + str(item.price)
-                                     + " previously was "
-                                     + str(old_price) + "\n")
+                # Sending text with Markdown support
+                updated_items.append( "[" + item.name[:NAME_LEN] + "]"
+                                     +"(" + item.url + ") \n"
+                                     + str(old_price) + " --> "
+                                     + str(item.price) + "\n")
                 db_item = db.ItemDb.get(db.ItemDb.url==item.url)
                 db_item.price = item.price
                 db_item.save()

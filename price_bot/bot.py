@@ -34,7 +34,8 @@ def callback_alarm(context : telegram.ext.CallbackContext):
         updated_items = user.check_prices()
         if updated_items != "":
             context.bot.send_message(chat_id=user_id,
-                                     text=updated_items)
+                                     text=updated_items,
+                                     parse_mode=telegram.ParseMode.MARKDOWN)
         else:
             return None
             # DEBUG
@@ -94,9 +95,9 @@ def start(update, context):
     if server.is_registered(user_id):
         update.message.reply_text("You've already registered")
         return
-    
-    update.message.reply_text("Hello, welcome to the PriceGetter Bot\n" 
-                             +"What is your name?" )
+
+    update.message.reply_text("Hello, welcome to the PriceGetter Bot\n"
+                              +"What is your name?" )
 
     return NAME
 
@@ -105,10 +106,14 @@ def name(update, context):
     user_id = update.message.chat_id
     name = update.message.text
     server.create_user(user_id, name)
-    update.message.reply_text("Hello " + name 
-                            + ", You are registered now"
-							+ ", you can start adding items to your list by typing /add url\n"
-							+ ", you can also use /help command to learn how to use this bot")
+
+    update.message.reply_text("Hello " + name
+                              + ", You are registered now"
+                              + ", you can start adding items to your "
+                              + "list by typing /add url\n"
+                              + ", you can also use /help command "
+                              + "to learn how to use this bot")
+
     return ConversationHandler.END
 
 def cancel(update, context):
@@ -193,11 +198,12 @@ if __name__ == '__main__':
     help_handler = CommandHandler('help', helper)
     delete_handler = CommandHandler('delete', delete)
     suppor_list_handler = CommandHandler('support', support_list)
-	conversation_handler = ConversationHandler(
-							entry_points=[CommandHandler('start', start)],
-							states={
-									NAME: [MessageHandler(Filters.text, name)]									},
-							fallbacks=[CommandHandler('cancel', cancel)]
+
+    conversation_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', start)],
+        states={ NAME: [MessageHandler(Filters.text, name)]},
+        fallbacks=[CommandHandler('cancel', cancel)]
+    )
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(add_item_handler)
