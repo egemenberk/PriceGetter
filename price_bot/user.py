@@ -15,9 +15,9 @@ class User:
 
         self.item_list = []
 
-    def add_item(self, url, name=None):
+    def add_item(self, url, name=None, proxies={}):
         item = Item(url)
-        item.extract_info() # fetch soup and then name, price etc..
+        item.extract_info(proxies) # fetch soup and then name, price etc..
 
         if name: # User has provided custom name
             item.name = name

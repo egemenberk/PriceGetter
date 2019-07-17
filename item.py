@@ -55,17 +55,31 @@ class Item:
     def update(self):
         self.extract_info()
 
-    def fetch_soup(self, headers=None):
+    def fetch_soup(self, headers=None, proxies={}):
         try:
             page = requests.get(self.url, headers=headers)
             if page.status_code > 500:
                 print("Server Error")
                 return None
+            else:
+                self.soup = BeautifulSoup(page.text, 'html.parser')
+                return 1
         except Exception as e:
             print("EXCEPTION occured while fetching soup")
             print(e)
             return None
-        self.soup = BeautifulSoup(page.text, 'html.parser')
+        
+        for url, val in proxies.items():
+            print("Trying with new proxy:", url)
+            try:
+                page = requests.get(self.url, proxies= {val[0]: url}, timeout=1)
+                self.soup = BeautifulSoup(page.text, 'html.parser')
+                break
+            except Exception as e:
+                logging.exception("with proxy in fetch_page")
+                #print(e)
+                continue
+
         return 1
 
     def fetch_tags(self, url_set):
@@ -144,9 +158,9 @@ class Item:
         self.clean_price(price_holder)
         self.convert_price()
 
-    def extract_info(self, url_set=True):
+    def extract_info(self, url_set=True, proxies={}):
         if self.soup == None:
-            self.fetch_soup()
+            self.fetch_soup(proxies)
         self.fetch_site_name()
         self.fetch_tags(url_set)
         self.get_name()

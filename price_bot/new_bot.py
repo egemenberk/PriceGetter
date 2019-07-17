@@ -16,6 +16,7 @@ import validators
 import database as db
 from user import User
 from server import Server
+from proxy import get_proxies
 
 token = open('token', 'r').read().strip()
 bot = Bot(token=token)
@@ -24,6 +25,7 @@ dispatcher = updater.dispatcher
 j = updater.job_queue
 
 server = Server()
+proxies = get_proxies()
 
 def callback_alarm(context : telegram.ext.CallbackContext):
     for user_id, user in server.users.items():
@@ -131,7 +133,7 @@ def add(update, context):
         return
 
     if validators.url(url):
-        if user.add_item(url, item_name):
+        if user.add_item(url, item_name, proxies):
             reply(update, "You've already added this item")
         else:
             reply(update, "Your item has been successfully added")
