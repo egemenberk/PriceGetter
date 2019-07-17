@@ -11,7 +11,7 @@ from telegram.ext import MessageHandler, Filters
 import time
 import sys
 sys.path.insert(0, './../')
-from item import Item
+from item import Item, NAME_TAGS
 import validators
 import database as db
 from user import User
@@ -28,16 +28,19 @@ server = Server()
 proxies = get_proxies()
 
 def callback_alarm(context : telegram.ext.CallbackContext):
+    """ This is called every specified minutes to
+    notify users if any item in their watchlist changes
+    """
     for user_id, user in server.users.items():
         updated_items = user.check_prices()
         if updated_items != "":
             context.bot.send_message(chat_id=user_id,
                                      text=updated_items)
         else:
+            return None
             # DEBUG
             context.bot.send_message(chat_id=user_id,
                                      text="No change in item prices")
-            return None
 
 
 def reply(update, text, markdown=False):
@@ -47,6 +50,17 @@ def reply(update, text, markdown=False):
                          parse_mode=telegram.ParseMode.MARKDOWN)
     else:
         update.message.reply_text(text)
+
+
+def support_list(update, context):
+    """ Command for showing supported websites
+    """
+    result = []
+
+    for key, value in NAME_TAGS.items():
+        result.append(key + "\n")
+
+    reply(update, "".join(result))
 
 
 def helper(update, context):
@@ -162,12 +176,14 @@ if __name__ == '__main__':
     add_item_handler = CommandHandler('add', add)
     help_handler = CommandHandler('help', helper)
     delete_handler = CommandHandler('delete', delete)
+    suppor_list_handler = CommandHandler('support', support_list)
 
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(add_item_handler)
     dispatcher.add_handler(list_item_handler)
     dispatcher.add_handler(help_handler)
     dispatcher.add_handler(delete_handler)
+    dispatcher.add_handler(suppor_list_handler)
     dispatcher.add_handler(echo_handler)
 
     server.start()
