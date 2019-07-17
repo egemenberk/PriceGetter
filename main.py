@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import argparse
+import sys
+sys.path.insert(0, "utils")
 import proxy
 from website import Site
 from category import Category

@@ -8,6 +8,7 @@ import argparse
 from item import Item
 import os
 from item_db import ItemDb
+sys.path.insert(0, "utils")
 from mail import send_mail
 
 user_agent_list = [

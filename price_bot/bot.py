@@ -10,6 +10,7 @@ from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, F
 import time
 import sys
 sys.path.insert(0, './../')
+sys.path.insert(0, "./../utils")
 from item import Item, NAME_TAGS
 import validators
 import database as db
