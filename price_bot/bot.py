@@ -93,7 +93,7 @@ def helper(update, context):
         "start": "Registers you to the system",
         "help": "Shows this message",
         "add": "Usage: /add NAME url or /add url",
-	    "list": "Fetches prices of the items from your list",
+        "list": "Fetches prices of the items from your list",
         "delete": "Usage: /delete item_no, you should provide item_no from the list you get by typing /list command",
         "support": "List supported sites to fetch prices of the items"
     }
@@ -124,12 +124,12 @@ def name(update, context):
     name = update.message.text
     server.create_user(user_id, name)
 
-    reply update, "Hello " + name
-                  + ", you are registered now\n"
-                  + "You can start adding items to your "
-                  + "list by typing /add url\n"
-                  + "You can also use /help command "
-                  + "to learn how to use this bot")
+    reply(update, "Hello " + name
+                + ", you are registered now\n"
+                + "You can start adding items to your "
+                + "list by typing /add url\n"
+                + "You can also use /help command "
+                + "to learn how to use this bot")
 
     return ConversationHandler.END
 
