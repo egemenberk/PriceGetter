@@ -1,12 +1,15 @@
 # What is this?
 This repository holds the scripts that are used of keeping track of the items 
-from various Turkish e-commerce websites via telegram bot or command line toools. 
-Fetching whole website is also possible
+from various Turkish e-commerce websites via telegram bot or command line tool. 
+
+Fetching whole website is also possible.
+
 List of available websites can be found by asking /support to the telegram bot or
 search NAME_TAGS in this repository
 
 # price_getter.py
-This is a generic script to scrape price information from websites
+This is a generic script to scrape price information from websites.
+
 It requires a single url or a file that contains bunch of urls as an input.
 The result with item prices is saved in a file
 
