@@ -35,3 +35,7 @@ pip3 install beautifulsoup4
 # Usage 
 python3 price_getter.py \<file containing prices\>
 
+
+# View of PriceGetter Bot
+![](https://media.giphy.com/media/LOnrqpjMZraIn14M0u/giphy.gif)
+
