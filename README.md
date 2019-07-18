@@ -25,7 +25,7 @@ This is telegram bot, that is capable of keeping track of the items that
 are provided by the user through telegram client
 
 # Requirements
-pip3 install beautifulsoup4
+    pip3 install beautifulsoup4
 
 ## For price_bot
     pip3 install peewee
@@ -33,9 +33,11 @@ pip3 install beautifulsoup4
     pip3 install python-telegram-bot==12.0.0b1 --upgrade
 
 # Usage 
-python3 price_getter.py \<file containing prices\>
+    python3 price_getter.py \<file containing prices\>
+
+# PriceGetter Bot
+To start using the bot [Click me](https://t.me/PriceGetter_bot)
 
 
-# View of PriceGetter Bot
 ![](https://media.giphy.com/media/LOnrqpjMZraIn14M0u/giphy.gif)
 
