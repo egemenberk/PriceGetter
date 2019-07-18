@@ -1,13 +1,18 @@
+#What is this?
+This repository holds the scripts that are used of keeping track of the items 
+from various Turkish e-commerce websites via telegram bot or command line toools. 
+Fetching whole website is also possible
+
 # price_getter.py
 This is a generic script to scrape price information from websites
 It requires a single url or a file that contains bunch of urls as an input
 The result with item prices is saved in a file
 
 # site_getter.py
-This module fetches the site as whole along with categories inside.
+This module fetches the site as whole along with categories inside
 
 # utils/item_db.py
-This module uses peewee ORM to save fetched products in sqlite database.
+This module uses peewee ORM to save fetched products in sqlite database
 
 # utils/proxy.py
 This scipt fetches available proxies to be later used with requests.get()
@@ -22,7 +27,8 @@ This module provides beautiful way to represent fetched results of the items
 
 # price_bot
 This is telegram bot, that is capable of keeping track of the items that
-are provided by the user through telegram client
+are provided by the user through telegram client. It notifies the user if
+price of any item changes.
 
 # Requirements
     pip3 install beautifulsoup4
