@@ -14,7 +14,9 @@ from server import Server
 from proxy import get_proxies
 from functools import wraps
 
+NAME = 0
 token = open('token', 'r').read().strip()
+
 bot = Bot(token=token)
 updater = Updater(token=token, use_context=True)
 dispatcher = updater.dispatcher
@@ -22,8 +24,10 @@ j = updater.job_queue
 
 logging.basicConfig(filename="log", level=logging.ERROR,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
 server = Server()
 proxies = get_proxies()
+
 
 def callback_alarm(context : CallbackContext):
     """ This is called every specified minutes to
@@ -40,6 +44,7 @@ def callback_alarm(context : CallbackContext):
             # DEBUG
             context.bot.send_message(chat_id=user_id,
                                      text="No change in item prices")
+
 
 def send_typing_action(func):
     """Sends typing action while processing func command."""
@@ -59,6 +64,7 @@ def reply(update, text, markdown=False):
     else:
         update.message.reply_text(text)
 
+
 @send_typing_action
 def support_list(update, context):
     """ Command for showing supported websites
@@ -75,7 +81,7 @@ def support_list(update, context):
 def helper(update, context):
     help_text = "The following commands are available: \n"
 
-    """
+    """ The below text is added to bot via BotFather using /setcommands
     help - Shows usages of the commands
     add - Adds new product to your list
     list - Fetches prices of the items in your list
@@ -86,9 +92,10 @@ def helper(update, context):
     commands = {
         "start": "Registers you to the system",
         "help": "Shows this message",
-        "add": "Usage: You can provide custom name by /add NAME url or /add url",
-	"list": "Fetches prices of the items in list",
-        "delete": "/delete item_no, you should provide item_no from the list you get by typing /list command"
+        "add": "Usage: /add NAME url or /add url",
+	    "list": "Fetches prices of the items from your list",
+        "delete": "Usage: /delete item_no, you should provide item_no from the list you get by typing /list command",
+        "support": "List supported sites to fetch prices of the items"
     }
 
     for key in commands:
@@ -97,16 +104,15 @@ def helper(update, context):
 
     reply(update, help_text)  # send the generated help page
 
-NAME = 1
 
 def start(update, context):
     user_id = update.message.chat_id
 
     if server.is_registered(user_id):
-        update.message.reply_text("You've already registered")
+        reply(update, "You've already registered")
         return
 
-    update.message.reply_text("Hello, welcome to the PriceGetter Bot\n"
+    reply(update, "Hello, welcome to the PriceGetter Bot\n"
                               +"What is your name?" )
 
     return NAME
@@ -118,12 +124,12 @@ def name(update, context):
     name = update.message.text
     server.create_user(user_id, name)
 
-    update.message.reply_text("Hello " + name
-                              + ", You are registered now"
-                              + ", you can start adding items to your "
-                              + "list by typing /add url\n"
-                              + ", you can also use /help command "
-                              + "to learn how to use this bot")
+    reply update, "Hello " + name
+                  + ", you are registered now\n"
+                  + "You can start adding items to your "
+                  + "list by typing /add url\n"
+                  + "You can also use /help command "
+                  + "to learn how to use this bot")
 
     return ConversationHandler.END
 
@@ -160,6 +166,7 @@ def add(update, context):
     user_id = update.message.chat_id
     user = server.get_user(user_id)
     item_name = None
+
     if len(context.args) == 2:
         try:
             item_name = context.args[0]
@@ -167,18 +174,21 @@ def add(update, context):
         except:
             reply(update, "Usage: /add name url")
             return
+
     elif len(context.args) == 1:
         try:
             url = context.args[0].replace(" ", "").replace("/add", "")
         except:
             reply(update, "Usage: /add url")
             return
+
     elif len(context.args) == 0:
             reply(update, "Provide url, Usage: /add url")
             return
     else:
         reply(update, "Provide url, Usage: /add url")
         return
+
 
     if validators.url(url):
         if user.add_item(url, item_name, proxies):
@@ -187,6 +197,7 @@ def add(update, context):
             reply(update, "Your item has been successfully added")
     else:
         reply(update, "URL you've provided is wrong, please try again")
+
 
 @must_register_first
 @send_typing_action
@@ -220,7 +231,7 @@ if __name__ == '__main__':
         fallbacks=[CommandHandler('cancel', cancel)]
     )
 
-    dispatcher.add_handler(start_handler)
+    #dispatcher.add_handler(start_handler)
     dispatcher.add_handler(add_item_handler)
     dispatcher.add_handler(list_item_handler)
     dispatcher.add_handler(help_handler)

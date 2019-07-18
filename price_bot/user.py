@@ -49,7 +49,7 @@ class User:
         return result
 
     def check_prices(self):
-        updated_items = []
+        updated_items = ["Hi " + self.name + " there is a price change\n"]
         for item in self.item_list:
             old_price = item.price
             item.update()
