@@ -1,22 +1,18 @@
 import logging
-import telegram
-
-logging.basicConfig(filename="log", level=logging.ERROR,
-                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-
-from telegram import Bot
-from telegram.ext import Updater
-from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler
-import time
+import validators
+import database as db
 import sys
 sys.path.insert(0, './../')
 sys.path.insert(0, "./../utils")
+
+from telegram import Bot, ParseMode, ChatAction
+from telegram.ext import Updater, CallbackContext
+from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler
 from item import Item, NAME_TAGS
-import validators
-import database as db
 from user import User
 from server import Server
 from proxy import get_proxies
+from functools import wraps
 
 token = open('token', 'r').read().strip()
 bot = Bot(token=token)
@@ -24,10 +20,12 @@ updater = Updater(token=token, use_context=True)
 dispatcher = updater.dispatcher
 j = updater.job_queue
 
+logging.basicConfig(filename="log", level=logging.ERROR,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 server = Server()
 proxies = get_proxies()
 
-def callback_alarm(context : telegram.ext.CallbackContext):
+def callback_alarm(context : CallbackContext):
     """ This is called every specified minutes to
     notify users if any item in their watchlist changes
     """
@@ -36,23 +34,32 @@ def callback_alarm(context : telegram.ext.CallbackContext):
         if updated_items != "":
             context.bot.send_message(chat_id=user_id,
                                      text=updated_items,
-                                     parse_mode=telegram.ParseMode.MARKDOWN)
+                                     parse_mode=ParseMode.MARKDOWN)
         else:
             return None
             # DEBUG
             context.bot.send_message(chat_id=user_id,
                                      text="No change in item prices")
 
+def send_typing_action(func):
+    """Sends typing action while processing func command."""
+    @wraps(func)
+    def command_func(update, context, *args, **kwargs):
+        context.bot.send_chat_action(chat_id=update.effective_message.chat_id, action=ChatAction.TYPING)
+        return func(update, context,  *args, **kwargs)
+
+    return command_func
+
 
 def reply(update, text, markdown=False):
     if markdown:
         bot.send_message(chat_id=update.message.chat_id,
                          text=text,
-                         parse_mode=telegram.ParseMode.MARKDOWN)
+                         parse_mode=ParseMode.MARKDOWN)
     else:
         update.message.reply_text(text)
 
-
+@send_typing_action
 def support_list(update, context):
     """ Command for showing supported websites
     """
@@ -64,6 +71,7 @@ def support_list(update, context):
     reply(update, "".join(result))
 
 
+@send_typing_action
 def helper(update, context):
     help_text = "The following commands are available: \n"
 
@@ -72,6 +80,7 @@ def helper(update, context):
     add - Adds new product to your list
     list - Fetches prices of the items in your list
     delete - Delete specified item with item_no in list
+    support - Shows supported sites
     """
 
     commands = {
@@ -103,6 +112,7 @@ def start(update, context):
     return NAME
 
 
+@send_typing_action
 def name(update, context):
     user_id = update.message.chat_id
     name = update.message.text
@@ -132,6 +142,7 @@ def must_register_first(func):
     return wrapper
 
 @must_register_first
+@send_typing_action
 def delete(update, context):
     user_id = update.message.chat_id
     user = server.get_user(user_id)
@@ -144,6 +155,7 @@ def delete(update, context):
 
 
 @must_register_first
+@send_typing_action
 def add(update, context):
     user_id = update.message.chat_id
     user = server.get_user(user_id)
@@ -177,6 +189,7 @@ def add(update, context):
         reply(update, "URL you've provided is wrong, please try again")
 
 @must_register_first
+@send_typing_action
 def list_items(update, context):
     user_id = update.message.chat_id
     user = server.get_user(user_id)
@@ -184,6 +197,7 @@ def list_items(update, context):
     reply(update, items, markdown=True)
 
 
+@send_typing_action
 def echo(update, context):
     if server.is_registered(message.from_user.id):
         reply(update, "I don't know what you're talking about")
