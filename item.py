@@ -16,7 +16,9 @@ NAME_TAGS = {"vatanbilgisayar.com":  ["div", "class", "ems-prd-name"],
              "itopya.com": ["h1", "class", "name"],
              "sinerji.gen.tr": ["h1", "itemprop", "name"],
              "gameekstra.com": ["div", "id", "urun_adi"],
-             "urun.n11.com": ["div", "class", "nameHolder"]
+             "urun.n11.com": ["div", "class", "nameHolder"],
+             "amazon.com": ["span", "id", "productTitle"],
+             "newegg.com": ["span", "itemprop", "name"]
              }
 
 PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"],
@@ -29,7 +31,9 @@ PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"]
              "itopya.com": ["div", "class", "new text-right"],
              "sinerji.gen.tr": ["div", "class", "urun_fiyati"],
              "gameekstra.com": ["div", "id", "indirimli_cevrilmis_fiyat"],
-             "urun.n11.com": ["div", "class", "newPrice"]
+             "urun.n11.com": ["div", "class", "newPrice"],
+             "amazon.com": ["span", "id", "priceblock_ourprice"],
+             "newegg.com": ["li", "class", "price-current"]
              }
 
 def handle_exception(func):
