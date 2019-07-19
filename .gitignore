@@ -9,5 +9,6 @@ vatan/
 TODO
 price_bot/log
 price_bot/token
+price_bot/telegram.db
 misc
 

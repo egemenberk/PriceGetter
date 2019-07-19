@@ -73,6 +73,9 @@ class User:
         if len(self.item_list) == 0:
             self.get_items_from_database()
 
+        for item in self.item_list:
+            item.update()
+
         result = self.items_to_string(self.item_list)
 
         if len(result) == 0:
