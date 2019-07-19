@@ -2,6 +2,7 @@ import requests
 import re
 import random
 from bs4 import BeautifulSoup
+from user_agents import get_new_header
 
 URL_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"]
 
@@ -64,8 +65,8 @@ class Item:
     def update(self):
         self.extract_info()
 
-    def fetch_soup(self, header_list=None, proxies={}):
-        headers = {"User-Agent": header_list[0]}
+    def fetch_soup(self, proxies={}):
+        headers = get_new_header()
         try:
             page = requests.get(self.url, headers=headers)
             if page.status_code > 500:
@@ -82,9 +83,7 @@ class Item:
 
         for url, val in proxies.items():
             print("Trying with new proxy:", url)
-            random.shuffle(header_list)
-            headers = {"User-Agent": header_list[0]}
-            print("New header", header_list[0])
+            headers = get_new_header()
             try:
                 page = requests.get(self.url, proxies= {val[0]: url},
                                     timeout=1,

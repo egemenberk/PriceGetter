@@ -13,7 +13,6 @@ from mail import send_mail
 from proxy import get_proxies
 
 
-
 thread_number = 16
 
 def split(a, n):
@@ -40,7 +39,6 @@ class PriceGetter:
     def __init__(self, item_list=[]):
         self.item_list = item_list
         self.db_lock = threading.Lock()
-        self.user_agent_list = user_agent_list
 
     def get_soups(self, thread_number):
         list_of_item_lists = split(self.item_list, thread_number)
@@ -58,7 +56,7 @@ class PriceGetter:
     def get_soups_helper(self, item_list):
         proxies = get_proxies()
         for item in item_list:
-            status = item.fetch_soup(self.user_agent_list, proxies=proxies)
+            status = item.fetch_soup(proxies=proxies)
             if status == None:
                 self.item_list.remove(item)
                 continue

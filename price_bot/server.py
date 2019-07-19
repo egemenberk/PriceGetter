@@ -15,9 +15,6 @@ class Server:
         self.users[user_id] = User(user_id, user.name)
         self.users[user_id].get_items_from_database()
 
-    def ask_name(self, message):
-        name = message.text
-
     def is_registered(self, user_id):
         try:
             self.users[user_id]

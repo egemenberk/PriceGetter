@@ -28,8 +28,7 @@ user_agent_list = [
     'Mozilla/4.0 (compatible; MSIE 8.0; Windows NT 5.1; Trident/4.0; .NET CLR 2.0.50727; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729)'
 ]
 
-def get_header():
-    random.shuffle(self.user_agent_list)
-    self.headers = {"User-Agent": user_agent_list[0]}
-
-
+def get_new_header():
+    ind = random.randint(0, len(user_agent_list)-1)
+    headers = {"User-Agent": user_agent_list[ind]}
+    return headers
