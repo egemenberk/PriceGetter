@@ -10,6 +10,7 @@ import os
 from item_db import ItemDb
 sys.path.insert(0, "utils")
 from mail import send_mail
+from proxy import get_proxies
 
 user_agent_list = [
    #Chrome
@@ -86,8 +87,9 @@ class PriceGetter:
         self.headers = {"User-Agent": user_agent_list[0]}
 
     def get_soups_helper(self, item_list):
+        proxies = get_proxies()
         for item in item_list:
-            status = item.fetch_soup(self.headers)
+            status = item.fetch_soup(self.headers, proxies=proxies)
             if status == None:
                 self.item_list.remove(item)
                 continue

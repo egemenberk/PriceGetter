@@ -69,7 +69,8 @@ class Item:
                 return None
             else:
                 self.soup = BeautifulSoup(page.text, 'html.parser')
-                return 1
+                if self.soup.title.text != "Are you a human?":
+                    return 1
         except Exception as e:
             print("EXCEPTION occured while fetching soup")
             print(e)
@@ -80,7 +81,8 @@ class Item:
             try:
                 page = requests.get(self.url, proxies= {val[0]: url}, timeout=1)
                 self.soup = BeautifulSoup(page.text, 'html.parser')
-                break
+                if self.soup.title.text != "Are you a human?":
+                    return 1
             except Exception as e:
                 logging.exception("with proxy in fetch_page")
                 #print(e)
@@ -175,6 +177,7 @@ class Item:
         self.fetch_tags(url_set)
         self.get_name()
         self.get_price()
+        print(self.name, self.price)
         if url_set == False:
             self.get_url()
 
