@@ -52,7 +52,7 @@ class User:
         return result
 
     def check_prices(self):
-        updated_items = ["Hi " + self.user_name + " there is a price change\n"]
+        updated_items = []
         for item in self.item_list:
             old_price = item.price
             item.soup = None
@@ -67,7 +67,11 @@ class User:
                 db_item.price = item.price
                 db_item.save()
 
-        return "".join(updated_items)
+        message = ""
+        if updated_items:
+            message = "Hi " + self.user_name + " there is a price change\n"
+
+        return "".join([message] + updated_items)
 
     def get_item_list(self):
 
