@@ -7,6 +7,10 @@ Fetching whole website is also possible.
 List of available websites can be found by asking /support to the telegram bot or
 search NAME_TAGS in this repository
 
+# What do not this provide?
+
+This project is not aimed to search and find the cheapest product from websites, instead you provide the urls of those sites and it notifies you when price changes
+
 # price_getter.py
 This is a generic script to scrape price information from websites.
 
