@@ -61,7 +61,8 @@ class Item:
     def update(self):
         self.extract_info()
 
-    def fetch_soup(self, headers=None, proxies={}):
+    def fetch_soup(self, header_list=None, proxies={}):
+        headers = {"User-Agent": header_list[0]}
         try:
             page = requests.get(self.url, headers=headers)
             if page.status_code > 500:
@@ -78,8 +79,13 @@ class Item:
 
         for url, val in proxies.items():
             print("Trying with new proxy:", url)
+            random.shuffle(header_list)
+            headers = {"User-Agent": header_list[0]}
+            print("New header", header_list[0])
             try:
-                page = requests.get(self.url, proxies= {val[0]: url}, timeout=1)
+                page = requests.get(self.url, proxies= {val[0]: url},
+                                    timeout=1,
+                                    headers=headers)
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 if self.soup.title.text != "Are you a human?":
                     return 1
