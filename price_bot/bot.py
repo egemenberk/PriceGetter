@@ -208,6 +208,7 @@ def list_items(update, context):
     user_id = update.message.chat_id
     user = server.get_user(user_id)
     items = user.get_item_list()
+    reply(update, "Last fetch is at most 5 minutes ago")
     reply(update, items, markdown=True)
 
 
