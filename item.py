@@ -1,5 +1,6 @@
 import requests
 import re
+import random
 from bs4 import BeautifulSoup
 
 URL_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"]
@@ -18,7 +19,8 @@ NAME_TAGS = {"vatanbilgisayar.com":  ["div", "class", "ems-prd-name"],
              "gameekstra.com": ["div", "id", "urun_adi"],
              "urun.n11.com": ["div", "class", "nameHolder"],
              "amazon.com": ["span", "id", "productTitle"],
-             "newegg.com": ["span", "itemprop", "name"]
+             "newegg.com": ["span", "itemprop", "name"],
+             "ebay.com": ["h1", "itemprop", "name"]
              }
 
 PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"],
@@ -33,7 +35,8 @@ PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"]
              "gameekstra.com": ["div", "id", "indirimli_cevrilmis_fiyat"],
              "urun.n11.com": ["div", "class", "newPrice"],
              "amazon.com": ["span", "id", "priceblock_ourprice"],
-             "newegg.com": ["li", "class", "price-current"]
+             "newegg.com": ["li", "class", "price-current"],
+             "ebay.com": ["span", "id", "mm-saleDscPrc"]
              }
 
 def handle_exception(func):
@@ -117,6 +120,9 @@ class Item:
         self.url = url.find("a")["href"]
 
     def get_name(self):
+        if self.site_name == "ebay.com":
+            self.name = self.soup.title.text
+            return
         if self.name != None:
             return
         tag_list = self.name_tag_list
@@ -183,7 +189,6 @@ class Item:
         self.fetch_tags(url_set)
         self.get_name()
         self.get_price()
-        print(self.name, self.price)
         if url_set == False:
             self.get_url()
 
