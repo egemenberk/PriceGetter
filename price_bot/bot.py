@@ -191,7 +191,10 @@ def add(update, context):
 
 
     if validators.url(url):
-        if user.add_item(url, item_name, proxies):
+        if "www." not in url:
+            reply(update, "Add www before site_name")
+            return
+        elif user.add_item(url, item_name, proxies):
             reply(update, "You've already added this item")
         else:
             reply(update, "Your item has been successfully added")

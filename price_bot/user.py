@@ -1,7 +1,9 @@
 import database as db
 import sys
 sys.path.insert(0, './../')
+sys.path.insert(0, './../utils/')
 from item import Item
+from currency import get_currency
 
 NAME_LEN = 25
 
@@ -41,10 +43,11 @@ class User:
         for i in range(len(item_list)):
             item = item_list[i]
             # Sending text with Markdown support
+            currency = get_currency(item.site_name)
             result.append(str(i+1) + "-) " + "["
                           + item.name[:NAME_LEN] + "]"
                           + "(" + item.url + ")"
-                          + ": ₺" + str(int(item.price))
+                          + ": "+ currency + str(int(item.price))
                           + "\n")
         return result
 
