@@ -114,7 +114,8 @@ class Item:
         tag_list = self.name_tag_list
         name_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
         if name_holder == None:
-            return "-"
+            self.name = "Name couldn't fetched"
+            return
         self.name = name_holder.text.strip() +  "(" + self.site_name + ")"
 
     def clean_price(self, price_holder):

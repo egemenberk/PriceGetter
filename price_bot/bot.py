@@ -194,8 +194,13 @@ def add(update, context):
         if "www." not in url:
             reply(update, "Add www before site_name")
             return
-        elif user.add_item(url, item_name, proxies):
+
+        status = user.add_item(url, item_name, proxies)
+
+        if status:
             reply(update, "You've already added this item")
+        elif status == None:
+            reply(update, "We could not fetch this item, sorry")
         else:
             reply(update, "Your item has been successfully added")
     else:

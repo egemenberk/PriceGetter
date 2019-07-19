@@ -21,6 +21,9 @@ class User:
         item = Item(url)
         item.extract_info(proxies) # fetch soup and then name, price etc..
 
+        if item.price == 0:
+            return None
+
         if name: # User has provided custom name
             item.name = name
 
@@ -36,7 +39,8 @@ class User:
                                 url=item.url)
 
 
-        self.item_list.append(item)
+        custom_item = Item(item.url, item.name, item.price)
+        self.item_list.append(custom_item)
 
     def items_to_string(self, item_list):
         result = []
