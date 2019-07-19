@@ -6,30 +6,30 @@ URL_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"]
 
             }
 
-NAME_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"],
-             "hepsiburada": ["span", "itemprop","name"],
-             "qp" : ["span", "class", "base"],
-             "amazon": ["span", "id", "productTitle"],
-             "ebrarbilgisayar": ["h1", "itemprop", "name"],
-             "incehesap": ["h1", "itemprop", "name"],
-             "trendyol": ["div", "class", "pr-in-nm"],
-             "itopya": ["h1", "class", "name"],
-             "sinerji": ["h1", "itemprop", "name"],
-             "gameekstra": ["div", "id", "urun_adi"],
-             "n11": ["div", "class", "nameHolder"]
+NAME_TAGS = {"vatanbilgisayar.com":  ["div", "class", "ems-prd-name"],
+             "hepsiburada.com": ["span", "itemprop","name"],
+             "qp.com.tr" : ["span", "class", "base"],
+             "amazon.com.tr": ["span", "id", "productTitle"],
+             "ebrarbilgisayar.com": ["h1", "itemprop", "name"],
+             "incehesap.com".: ["h1", "itemprop", "name"],
+             "trendyol.com": ["div", "class", "pr-in-nm"],
+             "itopya.com": ["h1", "class", "name"],
+             "sinerji.gen.tr": ["h1", "itemprop", "name"],
+             "gameekstra.com": ["div", "id", "urun_adi"],
+             "urun.n11.com": ["div", "class", "nameHolder"]
              }
 
-PRICE_TAGS = {"vatanbilgisayar":  ["span", "class", "ems-prd-price-selling"],
-             "hepsiburada": ["span", "id", "offering-price"],
-             "qp" : ["span", "class", "price"],
-             "amazon": ["span", "id", "priceblock_ourprice"],
-             "ebrarbilgisayar": ["div", "class", "urun_fiyati"],
-             "incehesap": ["span", "class", "cur"],
-             "trendyol": ["span", "class", "prc-slg"],
-             "itopya": ["div", "class", "new text-right"],
-             "sinerji": ["div", "class", "urun_fiyati"],
-             "gameekstra": ["div", "id", "indirimli_cevrilmis_fiyat"],
-             "n11": ["div", "class", "newPrice"]
+PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"],
+             "hepsiburada.com": ["span", "id", "offering-price"],
+             "qp.com.tr" : ["span", "class", "price"],
+             "amazon.com.tr": ["span", "id", "priceblock_ourprice"],
+             "ebrarbilgisayar.com": ["div", "class", "urun_fiyati"],
+             "incehesap.com": ["span", "class", "cur"],
+             "trendyol.com": ["span", "class", "prc-slg"],
+             "itopya.com": ["div", "class", "new text-right"],
+             "sinerji.gen.tr": ["div", "class", "urun_fiyati"],
+             "gameekstra.com": ["div", "id", "indirimli_cevrilmis_fiyat"],
+             "urun.n11.com": ["div", "class", "newPrice"]
              }
 
 def handle_exception(func):
@@ -70,7 +70,7 @@ class Item:
             print("EXCEPTION occured while fetching soup")
             print(e)
             return None
-        
+
         for url, val in proxies.items():
             print("Trying with new proxy:", url)
             try:
@@ -92,15 +92,9 @@ class Item:
 
     def fetch_site_name(self):
         if "www." in self.url:
-            self.site_name = self.url.split("www.")[1].split(".")[0]
-        else:
-            self.site_name = self.url.split("://")[1].split(".")[0]
-
-        try:
-            NAME_TAGS[self.site_name]
-        except: # Some fucking sites having fucking names
-            if self.site_name == "urun":
-                self.site_name = "n11"
+            self.site_name = self.url.split("www.")[1].split("/")[0]
+        else: # Some fucking sites having fucking names
+            raise Exception
 
     def get_url(self):
         url = self.soup.find(self.url_tags[0], {self.url_tags[1]:self.url_tags[2]})
@@ -129,16 +123,16 @@ class Item:
         if self.site_name == None:
             self.fetch_site_name()
 
-        if "vatanbilgisayar" in self.site_name:
+        if "vatanbilgisayar.com" in self.site_name:
             price = price_holder.text.split("TL")[0]
 
-        elif "itopya" in self.site_name:
+        elif "itopya.com" in self.site_name:
             price = price_holder.contents[0]
 
-        elif "incehesap" in self.site_name:
+        elif "incehesap.com" in self.site_name:
             price = price_holder.text.strip('\r')
 
-        elif "hepsiburada" in self.site_name:
+        elif "hepsiburada.com" in self.site_name:
             price = price_holder["content"]
 
         else:
