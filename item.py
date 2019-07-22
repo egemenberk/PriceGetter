@@ -71,7 +71,6 @@ class Item:
             page = requests.get(self.url, headers=headers)
             if page.status_code > 500:
                 print("Server Error")
-                return None
             else:
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 if self.soup.title.text != "Are you a human?":
@@ -88,6 +87,9 @@ class Item:
                 page = requests.get(self.url, proxies= {val[0]: url},
                                     timeout=1,
                                     headers=headers)
+                if page.status_code > 500:
+                    print("Server Error")
+                    continue
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 if self.soup.title.text != "Are you a human?":
                     return 1

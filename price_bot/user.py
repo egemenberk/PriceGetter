@@ -19,7 +19,7 @@ class User:
 
     def add_item(self, url, name=None, proxies={}):
         item = Item(url)
-        item.extract_info(proxies) # fetch soup and then name, price etc..
+        item.extract_info(proxies=proxies) # fetch soup and then name, price etc..
 
         if item.price == 0:
             return None
@@ -31,7 +31,7 @@ class User:
                                 db.ItemDb.url == url)
 
         if created: # Item is already added
-            return True
+            return False
 
         item = db.ItemDb.create(owner=self.id,
                                 name=item.name,
@@ -41,6 +41,7 @@ class User:
 
         custom_item = Item(item.url, item.name, item.price)
         self.item_list.append(custom_item)
+        return True
 
     def items_to_string(self, item_list):
         result = []
