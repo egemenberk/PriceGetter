@@ -11,4 +11,5 @@ price_bot/log
 price_bot/token
 price_bot/telegram.db
 misc
-
+utils/Test.ipynb
+utils/test.py
