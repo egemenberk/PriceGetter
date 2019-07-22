@@ -8,7 +8,6 @@ sys.path.insert(0, "./../utils")
 from telegram import Bot, ParseMode, ChatAction
 from telegram.ext import Updater, CallbackContext
 from telegram.ext import CommandHandler, CallbackQueryHandler, MessageHandler, Filters, ConversationHandler
-from item import Item, NAME_TAGS
 from user import User
 from server import Server
 from proxy import get_proxies
@@ -71,7 +70,7 @@ def support_list(update, context):
     """
     result = []
 
-    for key, value in NAME_TAGS.items():
+    for key, value in server.support_list.items():
         result.append(key + "\n")
 
     reply(update, "".join(result))
@@ -156,7 +155,7 @@ def delete(update, context):
         response = user.remove_item(int(context.args[0]))
         reply(update, response)
     except Exception as e:
-        print(e)
+        logging.error(e)
         reply(update, "Usage: /delete item_no")
 
 
@@ -188,7 +187,6 @@ def add(update, context):
     else:
         reply(update, "Provide url, Usage: /add url")
         return
-
 
     if validators.url(url):
         if "www." not in url:

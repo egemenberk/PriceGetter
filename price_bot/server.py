@@ -1,10 +1,12 @@
 import database as db
 from user import User
+from item import Item, NAME_TAGS
 
 class Server:
 
     def __init__(self):
         self.users = {}  # id, User
+        self.support_list = NAME_TAGS
 
     def create_user(self, user_id, name):
         """ This creates a new user if the user was not registered

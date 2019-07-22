@@ -21,7 +21,10 @@ NAME_TAGS = {"vatanbilgisayar.com":  ["div", "class", "ems-prd-name"],
              "urun.n11.com": ["div", "class", "nameHolder"],
              "amazon.com": ["span", "id", "productTitle"],
              "newegg.com": ["span", "itemprop", "name"],
-             "ebay.com": ["h1", "itemprop", "name"]
+             "ebay.com": ["h1", "itemprop", "name"],
+             "mediamarkt.com.tr": ["h1", "itemprop", "name"],
+             "teknosa.com": ["div", "class", "product-title"],
+             "istanbulbilisim.com": ["h1", "itemprop", "name"]
              }
 
 PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"],
@@ -37,17 +40,12 @@ PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"]
              "urun.n11.com": ["div", "class", "newPrice"],
              "amazon.com": ["span", "id", "priceblock_ourprice"],
              "newegg.com": ["li", "class", "price-current"],
-             "ebay.com": ["span", "id", "mm-saleDscPrc"]
+             "ebay.com": ["span", "id", "mm-saleDscPrc"],
+             "mediamarkt.com.tr": ["meta", "itemprop", "price"],
+             "teknosa.com": ["div", "class", "price-tag"],
+             "istanbulbilisim.com": ["p", "class", "price-act"]
              }
 
-def handle_exception(func):
-    def wrapper(*args, **kwargs):
-        try:
-            func(*args, **kwargs)
-        except Exception as e:
-            print("EXCEPTION occured in function" + str(func))
-            print(e)
-    return wrapper
 
 class Item:
     def __init__(self, url=None, name=None, price=0, soup=None):
@@ -134,6 +132,7 @@ class Item:
         self.name = name_holder.text.strip() +  "(" + self.site_name + ")"
 
     def clean_price(self, price_holder):
+        """Remove unnecessary strings from price"""
         price = ""
 
         if price_holder == None:
@@ -155,6 +154,9 @@ class Item:
         elif "hepsiburada.com" in self.site_name:
             price = price_holder["content"]
 
+        elif "mediamarkt.com.tr" in self.site_name:
+            price = price_holder["content"]
+
         else:
             price = price_holder.text.strip()
 
@@ -164,8 +166,7 @@ class Item:
         self.price = price
 
     def convert_price(self):
-        """ Gets String Returns Float
-        """
+        """Gets String Returns Float"""
         price = self.price.replace("\n", "").replace("\xa0","")
         num = re.search('[0-9]+[\.|\,]?[0-9]+', price)
         if num == None:
@@ -176,7 +177,6 @@ class Item:
                 price *= 1000
         self.price = price
 
-    @handle_exception
     def get_price(self):
         tag_list = self.price_tag_list
         price_holder = self.soup.find(tag_list[0], {tag_list[1] : tag_list[2]})
@@ -184,6 +184,7 @@ class Item:
         self.convert_price()
 
     def extract_info(self, url_set=True, proxies={}):
+        """Extract name and price"""
         if self.soup == None:
             self.fetch_soup(proxies)
         self.fetch_site_name()
