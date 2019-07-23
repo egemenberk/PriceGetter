@@ -25,7 +25,7 @@ logging.basicConfig(filename="log", level=logging.ERROR,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 server = Server()
-proxies = get_proxies()
+proxies = {} #get_proxies()
 
 
 def callback_alarm(context : CallbackContext):
@@ -217,20 +217,22 @@ def list_items(update, context):
 
 @send_typing_action
 def echo(update, context):
-    if server.is_registered(message.from_user.id):
-        reply(update, "I don't know what you're talking about")
+    user_id = update.message.chat_id
+    if server.is_registered(user_id):
+        reply(update, "I could not understand you, type /help")
     else:
         reply(update, "Please write /start to register")
 
 
 if __name__ == '__main__':
     list_item_handler = CommandHandler('list', list_items)
-    echo_handler = CommandHandler('echo', echo)
     start_handler = CommandHandler('start', start)
     add_item_handler = CommandHandler('add', add)
     help_handler = CommandHandler('help', helper)
     delete_handler = CommandHandler('delete', delete)
     suppor_list_handler = CommandHandler('support', support_list)
+    unknown_text_handler = MessageHandler(Filters.text, echo)
+    unknown_command_handler = MessageHandler(Filters.command, echo)
 
     conversation_handler = ConversationHandler(
         entry_points=[CommandHandler('start', start)],
@@ -238,14 +240,14 @@ if __name__ == '__main__':
         fallbacks=[CommandHandler('cancel', cancel)]
     )
 
-    #dispatcher.add_handler(start_handler)
     dispatcher.add_handler(add_item_handler)
     dispatcher.add_handler(list_item_handler)
     dispatcher.add_handler(help_handler)
     dispatcher.add_handler(delete_handler)
     dispatcher.add_handler(suppor_list_handler)
-    dispatcher.add_handler(echo_handler)
     dispatcher.add_handler(conversation_handler)
+    dispatcher.add_handler(unknown_text_handler)
+    dispatcher.add_handler(unknown_command_handler)
 
     server.start()
     print("Server has started")
