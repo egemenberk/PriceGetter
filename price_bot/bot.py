@@ -25,7 +25,7 @@ logging.basicConfig(filename="log", level=logging.ERROR,
                     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
 server = Server()
-proxies = {} #get_proxies()
+proxies = get_proxies()
 
 
 def callback_alarm(context : CallbackContext):

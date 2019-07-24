@@ -3,6 +3,7 @@ import re
 import random
 from bs4 import BeautifulSoup
 from user_agents import get_new_header
+import logging
 
 URL_TAGS = {"vatanbilgisayar":  ["div", "class", "ems-prd-name"]
 
@@ -68,20 +69,22 @@ class Item:
     def fetch_soup(self, proxies={}):
         headers = get_new_header()
         try:
-            page = requests.get(self.url, headers=headers)
+            page = requests.get(self.url) # FUCKING HEADERS CHANGE THE SITE, headers=headers)
             if page.status_code > 500:
                 print("Server Error")
             else:
                 self.soup = BeautifulSoup(page.text, 'html.parser')
-                if self.soup.title.text != "Are you a human?":
+                title = self.soup.title.text
+                if title != "Are you a human?" and title != "Robot Check":
                     return 1
+
         except Exception as e:
             print("EXCEPTION occured while fetching soup")
             print(e)
             return None
 
         for url, val in proxies.items():
-            print("Trying with new proxy:", url)
+            #print("Trying with new proxy:", url)
             headers = get_new_header()
             try:
                 page = requests.get(self.url, proxies= {val[0]: url},
@@ -90,9 +93,12 @@ class Item:
                 if page.status_code > 500:
                     print("Server Error")
                     continue
+
                 self.soup = BeautifulSoup(page.text, 'html.parser')
-                if self.soup.title.text != "Are you a human?":
+                title = self.soup.title.text
+                if title != "Are you a human?" and title != "Robot Check":
                     return 1
+
             except Exception as e:
                 logging.exception("with proxy in fetch_page")
                 #print(e)
@@ -193,6 +199,10 @@ class Item:
         self.fetch_tags(url_set)
         self.get_name()
         self.get_price()
+        print(self.soup.find("span", {"id": "productTitle"}))
+        print(self.site_name)
+        print(self.name_tag_list, self.price_tag_list)
+        print(self.name, self.price, url_set, len(proxies))
         if url_set == False:
             self.get_url()
 
