@@ -20,7 +20,7 @@ TLDR: This project was born because of mine laziness.
 
 # What do not this provide?
 
-This project is not aimed to search and find the cheapest product from websites, instead you provide the urls of those sites and it notifies you when price changes
+This project is not aimed to search and find the cheapest product from websites, instead you provide the urls of those items/products and it notifies you when there is a price change
 
 # price_getter.py
 This is a generic script to scrape price information from websites.
