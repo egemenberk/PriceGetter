@@ -1,10 +1,6 @@
+
 # What is this?
-This is my simple and humble hobby project. I wanted to build a PC with my friend,
-for that purpose we prepared a list of items, but the problem was we did not have,
-enough time to monitor prices of the items one by one, we also did not want to
-download and register to each e-commerce site's app, so this project was born.
-
-
+This is my simple and humble hobby project. 
 This repository holds the scripts that are used of keeping track of the items 
 from various Turkish e-commerce websites via telegram bot or command line tool. 
 
@@ -12,6 +8,12 @@ Fetching whole website is also possible.
 
 List of available websites can be found by asking /support to the telegram bot or
 search NAME_TAGS in this repository
+
+# How did it start?
+I wanted to build a PC with my friend, for that purpose we prepared a list of items, 
+but the problem was we did not have enough time to monitor prices of the each item, 
+we also did not want to download and register to each e-commerce site's app so that 
+we can get notification because there were too many, so this project was born because of our laziness.
 
 # What do not this provide?
 
