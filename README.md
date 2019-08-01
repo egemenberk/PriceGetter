@@ -12,8 +12,11 @@ search NAME_TAGS in this repository
 # How did it start?
 I wanted to build a PC with my friend, for that purpose we prepared a list of items, 
 but the problem was we did not have enough time to monitor prices of the each item, 
-we also did not want to download and register to each e-commerce site's app so that 
-we can get notification because there were too many, so this project was born because of our laziness.
+Since there were too many different sites we did not want to download and register 
+to each site's app, so we wanted a single application to track all these items from 
+different websites. 
+
+TLDR: This project was born because of mine laziness.
 
 # What do not this provide?
 
