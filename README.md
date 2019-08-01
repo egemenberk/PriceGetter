@@ -14,9 +14,9 @@ I wanted to build a PC with my friend, for that purpose we prepared a list of it
 but the problem was we did not have enough time to monitor prices of the each item, 
 Since there were too many different sites we did not want to download and register 
 to each site's app, so we wanted a single application to track all these items from 
-different websites. 
+different websites. Frankly, this project was born because of mine laziness.
 
-TLDR: This project was born because of mine laziness.
+TLDR: I wanted to monitor prices of items for my custom build PC
 
 # What do not this provide?
 
