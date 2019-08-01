@@ -1,4 +1,10 @@
 # What is this?
+This is my simple and humble hobby project. I wanted to build a PC with my friend,
+for that purpose we prepared a list of items, but the problem was we did not have,
+enough time to monitor prices of the items one by one, we also did not want to
+download and register to each e-commerce site's app, so this project was born.
+
+
 This repository holds the scripts that are used of keeping track of the items 
 from various Turkish e-commerce websites via telegram bot or command line tool. 
 
@@ -50,7 +56,7 @@ price of any item changes.
     pip3 install python-telegram-bot==12.0.0b1 --upgrade
 
 # Usage 
-    python3 price_getter.py \<file containing prices\>
+    python3 price_getter.py <file containing prices>
 
 # PriceGetter Bot
 To start using the bot [Click me](https://t.me/PriceGetter_bot)
