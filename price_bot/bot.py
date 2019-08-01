@@ -32,6 +32,7 @@ def callback_alarm(context : CallbackContext):
     """ This is called every specified minutes to
     notify users if any item in their watchlist changes
     """
+    logging.log(logging.ERROR, "Notifying Users")
     for user_id, user in server.users.items():
         updated_items = user.check_prices()
         if updated_items != "":
@@ -39,8 +40,8 @@ def callback_alarm(context : CallbackContext):
                                      text=updated_items,
                                      parse_mode=ParseMode.MARKDOWN)
         else:
-            return None
             # DEBUG
+            continue
             context.bot.send_message(chat_id=user_id,
                                      text="No change in item prices")
 
@@ -251,7 +252,7 @@ if __name__ == '__main__':
 
     server.start()
     print("Server has started")
-    ten_min = 5 * 60
-    j.run_repeating(callback_alarm, interval=ten_min)
+    ten_min = 30 * 60
+    j.run_repeating(callback_alarm, interval=ten_min, first=True)
 
     updater.start_polling()

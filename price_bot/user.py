@@ -60,7 +60,7 @@ class User:
         updated_items = []
         for item in self.item_list:
             old_price = item.price
-            item.soup = None
+            item.reset_info()
             item.update()
             if int(old_price) != int(item.price):
                 # Sending text with Markdown support

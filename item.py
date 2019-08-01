@@ -22,6 +22,7 @@ NAME_TAGS = {"vatanbilgisayar.com":  ["div", "class", "ems-prd-name"],
              "urun.n11.com": ["div", "class", "nameHolder"],
              "m.n11.com": ["h1", "class", "title"],
              "amazon.com": ["span", "id", "productTitle"],
+             "amazon.de": ["span", "id", "productTitle"],
              "newegg.com": ["span", "itemprop", "name"],
              "ebay.com": ["h1", "itemprop", "name"],
              "mediamarkt.com.tr": ["h1", "itemprop", "name"],
@@ -42,6 +43,7 @@ PRICE_TAGS = {"vatanbilgisayar.com":  ["span", "class", "ems-prd-price-selling"]
              "urun.n11.com": ["div", "class", "newPrice"],
              "m.n11.com": ["ins", "class", "price"],
              "amazon.com": ["span", "id", "priceblock_ourprice"],
+             "amazon.de": ["span", "id", "priceblock_ourprice"],
              "newegg.com": ["li", "class", "price-current"],
              "ebay.com": ["span", "id", "mm-saleDscPrc"],
              "mediamarkt.com.tr": ["meta", "itemprop", "price"],
@@ -72,6 +74,7 @@ class Item:
             page = requests.get(self.url) # FUCKING HEADERS CHANGE THE SITE, headers=headers)
             if page.status_code > 500:
                 print("Server Error")
+                return 0
             else:
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 title = self.soup.title.text
@@ -191,18 +194,19 @@ class Item:
         self.clean_price(price_holder)
         self.convert_price()
 
+    def reset_info(self):
+        self.soup = None
+
     def extract_info(self, url_set=True, proxies={}):
         """Extract name and price"""
         if self.soup == None:
-            self.fetch_soup(proxies)
+            if self.fetch_soup(proxies) != 1: # 500 error got when requested
+                return None
+
         self.fetch_site_name()
         self.fetch_tags(url_set)
         self.get_name()
         self.get_price()
-        print(self.soup.find("span", {"id": "productTitle"}))
-        print(self.site_name)
-        print(self.name_tag_list, self.price_tag_list)
-        print(self.name, self.price, url_set, len(proxies))
         if url_set == False:
             self.get_url()
 
