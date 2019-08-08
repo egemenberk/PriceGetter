@@ -1,6 +1,7 @@
 
 # What is this?
-This is my simple and humble hobby project. 
+This is my simple and humble hobby project.
+
 This repository holds the scripts that are used to keep track of items 
 from various e-commerce websites 
 
@@ -15,16 +16,16 @@ search NAME_TAGS in this repository
 
 # How did it start?
 I wanted to build a PC with my friend, for that purpose we prepared a list of items, 
-but the problem was we did not have enough time to monitor prices of the each item, 
+but the problem was we did not have enough time to monitor and update the prices of each item, 
 Since there were too many different sites we did not want to download and register 
 to each site's app, so we wanted a single application to track all these items from 
 different websites. Frankly, this project was born because of mine laziness.
 
 TLDR: I wanted to monitor prices of items for my custom build PC
 
-# What do not this provide?
+# What is not provided in this repository?
 
-This project is not aimed to search and find the cheapest product from websites, instead you provide the urls of those items/products and it notifies you when there is a price change
+This project is not aimed to search and find the cheapest product from the web by comparing each website, instead you provide the urls of those items/products and it notifies you when there is a price change
 
 # price_getter.py
 This is a generic script to scrape price information from websites.
