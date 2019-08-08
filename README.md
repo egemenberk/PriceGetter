@@ -1,10 +1,14 @@
 
 # What is this?
 This is my simple and humble hobby project. 
-This repository holds the scripts that are used of keeping track of the items 
-from various Turkish e-commerce websites via telegram bot or command line tool. 
+This repository holds the scripts that are used to keep track of items 
+from various e-commerce websites 
 
-Fetching whole website is also possible.
+Items can be tracked manually by providing a list of urls to the main script. Also, it can send an e-mail including the items which you provided.
+
+Items can also be tracked via telegram bot which notifies if there is a change.
+
+Fetching whole items on a website with each items' categories is also possible. (It is only tested for vatanbilgisayar.com)
 
 List of available websites can be found by asking /support to the telegram bot or
 search NAME_TAGS in this repository
