@@ -52,7 +52,7 @@ class User:
             result.append(str(i+1) + "-) " + "["
                           + item.name[:NAME_LEN] + "]"
                           + "(" + item.url + ")"
-                          + ": "+ currency + str(int(item.price))
+                          + ": "+ currency + str(item.price)
                           + "\n")
         return result
 
