@@ -71,10 +71,11 @@ class Item:
     def fetch_soup(self, proxies={}):
         headers = get_new_header()
         try:
-            page = requests.get(self.url) # FUCKING HEADERS CHANGE THE SITE, headers=headers)
+            page = requests.get(self.url, headers=headers)
             if page.status_code > 500:
                 print("Server Error")
-                return 0
+                print("Status code: ", page.status_code)
+                #return 0
             else:
                 self.soup = BeautifulSoup(page.text, 'html.parser')
                 title = self.soup.title.text
