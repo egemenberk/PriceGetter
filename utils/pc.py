@@ -33,10 +33,11 @@ class Pc:
                     i = 1
             out.append("----------------")
         out.append("Total: " + str(total))
+        out.append("Note: Total is calculated by using the cheapest products")
         return "\n".join(out)
 
     def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
+        return json.dumps(self, default=lambda o: o.__dict__,
                           sort_keys=True, indent=4)
 
 select_table = {1: "cpu",
@@ -56,7 +57,7 @@ if __name__ == "__main__":
 
     while True:
         print()
-        print("Please select option")
+        print("Please select category to insert item")
         print("1-) Cpu")
         print("2-) Gpu")
         print("3-) Ssd")
